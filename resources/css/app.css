@@ -11,3 +11,27 @@
     --font-roboto: "Roboto", sans-serif;
     --font-helvetica: "Helvetica", sans-serif;
 }
+
+.hamburger-line {
+  @apply w-[23px] h-[4px] my-1 block bg-[#19243A];
+}
+
+.hamburger-active > span:nth-child(1) {
+  @apply rotate-45 translate-x-[2px] ;
+}
+
+.hamburger-active > span:nth-child(2) {
+  @apply scale-0;
+}
+
+.hamburger-active > span:nth-child(3) {
+  @apply -rotate-45;
+}
+
+.navbar-fixed {
+  @apply fixed z-50 top-0 p-0 rounded-none;
+}
+
+.garis {
+  @apply w-full h-0.5 bg-gradient-to-r bg-gradient-to-r from-transparent from-5% via-black to-transparent to-95% rounded-full;
+}

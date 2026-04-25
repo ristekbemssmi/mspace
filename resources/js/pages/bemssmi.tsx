@@ -1,44 +1,48 @@
 import { Head } from '@inertiajs/react';
+import BemBirdept from '@/layouts/bemssmi/bemssmi-birdept';
+import BemDetail from '@/layouts/bemssmi/bemssmi-detail';
+import BemLogo from '@/layouts/bemssmi/bemssmi-logo';
+import BemMisi from '@/layouts/bemssmi/bemssmi-misi';
+import BemTentang from '@/layouts/bemssmi/bemssmi-tentang';
 import HeaderLayout from '@/layouts/header';
-import HomeBeasiswa from '@/layouts/home/home-beasiswa';
-import HomeBEM from '@/layouts/home/home-bem';
-import HomeInfo from '@/layouts/home/home-info';
-// import HomeLogo from '@/layouts/home/home-logo';
-import HomeSSMI from '@/layouts/home/home-ssmi';
 import HomeVisi from '@/layouts/home/home-visi';
 
 
 export default function Home() {
     return (
         <>
-            <Head title='Home'>
+            <Head title='BEM SSMI'>
                 <link href="https://fonts.googleapis.com" rel="stylesheet" />
                 <link href="https://fonts.cdnfonts.com/css/helvetica-255" rel="stylesheet" />
             </Head>
             <main className="mx-auto max-w-screen bg-[url(./../../public/img/bg.svg)] bg-center bg-repeat-space bg-auto">
 
-                {/* Visi dan Misi */}
+                {/* Tagline SSMI */}
                 <HomeVisi>
                 </HomeVisi>
 
-                {/* SSMI */}
-                <HomeSSMI>
-                </HomeSSMI>
+                {/* Bem SSMI */}
+                <BemTentang>
+                </BemTentang>
 
-                {/* BEM */}
-                <HomeBEM>
-                </HomeBEM>
-                
+                {/* Bem Misi */}
+                <BemMisi>
+                </BemMisi>
 
-                {/* News */}
-                <HomeInfo>
-                </HomeInfo>
-                
+                {/* Bem Logo */}
+                <BemLogo>
+                </BemLogo>
 
-                {/* Info Beasiswa */}
-                <HomeBeasiswa>
-                </HomeBeasiswa>
-                
+                {/* Bem Logo Detail */}
+                <BemDetail>
+                </BemDetail>
+
+                {/* Bem Birdept */}
+                <BemBirdept>
+                </BemBirdept>
+                <>
+        </>
+
             </main>
         </>
     );

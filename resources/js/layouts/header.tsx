@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 
+
+
 export default function HeaderLayout({ children }: { children: ReactNode }) {
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -35,7 +37,7 @@ export default function HeaderLayout({ children }: { children: ReactNode }) {
                             <a href="#home" className="mr-2 group lg:inline hidden">
                                 <img src="./img/logo.svg" alt="M-Space Logo" className="h-10 w-10 group-hover:scale-110 transition" />
                             </a>
-                            <a href="#home" className="text-2xl font-black tracking-[-1.016px] block hover:text-[#1f58d4] hover:scale-110 transition">M-SPACE</a>
+                            <a href="/" className="text-2xl font-black tracking-[-1.016px] block hover:text-[#1f58d4] hover:scale-110 transition">M-SPACE</a>
                         </div>
                         <div className="flex items-center">
                             <nav className="hidden mx-8 items-center gap-6 font-normal text-[#19243A] text-xl sm:flex">

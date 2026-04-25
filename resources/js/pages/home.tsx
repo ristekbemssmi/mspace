@@ -6,7 +6,7 @@ import HomeInfo from '@/layouts/home/home-info';
 // import HomeLogo from '@/layouts/home/home-logo';
 import HomeSSMI from '@/layouts/home/home-ssmi';
 import HomeVisi from '@/layouts/home/home-visi';
-
+// import FooterLayout from '@/layouts/footer';
 
 export default function Home() {
     return (

@@ -1,7 +1,7 @@
 export default function BemTentang() {
     return (
         <>
-            <section id="ssmi-tentang" className="w-full h-min-screen flex flex-col md:flex-row items-center justify-center p-5 md:p-16 mt-16 md:m-0 gap-10 md:gap-16">
+            <section id="ssmi-tentang" className="w-full h-min-screen flex flex-col md:flex-row items-center justify-center p-10 md:p-16 mt-16 md:m-0 gap-10 md:gap-16">
                 <div className="w-full md:w-5/12">
                     <div className="w-full h-96 bg-white rounded-3xl"></div>
                 </div>

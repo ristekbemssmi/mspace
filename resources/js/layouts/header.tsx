@@ -63,8 +63,8 @@ export default function HeaderLayout({ children }: { children: ReactNode }) {
                                     </nav>
                                 </div>
                                 <a href="/bemssmi" className="hover:text-[#1f58d4] hover:scale-110 transition">BEM SSMI</a>
-                                <a href="" className="hover:text-[#1f58d4] hover:scale-110 transition">Akademik</a>
-                                <a href="" className="hover:text-[#1f58d4] hover:scale-110 transition">FAQ</a>
+                                <a href="/akademik" className="hover:text-[#1f58d4] hover:scale-110 transition">Akademik</a>
+                                <a href="/faq" className="hover:text-[#1f58d4] hover:scale-110 transition">FAQ</a>
                                 {/* <a href="" className="grid h-10 w-10 place-items-center rounded-[7.157px] bg-[#19243A] hover:bg-[#0e2e73] transition-all"><img src="./img/keranjang.svg" alt="Shop" /></a> */}
                             </nav>
                             <button id="hamburger" name="hamburger" type="button" className={`group block absolute right-4 sm:hidden
@@ -96,7 +96,7 @@ export default function HeaderLayout({ children }: { children: ReactNode }) {
                                                 <div className="garis"></div>
                                                 <li><a href="" className="block px-4 py-2 hover:text-[#1f58d4] hover:scale-110 transition-all">Informasi Magang</a></li>
                                             </ul>
-                                    </nav>
+                                        </nav>
                                     </li>
                                     <div className="garis"></div>
                                     <li className="group py-2">
@@ -104,11 +104,11 @@ export default function HeaderLayout({ children }: { children: ReactNode }) {
                                     </li>
                                     <div className="garis"></div>
                                     <li className="group py-2">
-                                        <a href="#home" className="text-[#19243A] block group-hover:text-[#1f58d4] group-hover:scale-110 transition">Akademik</a>
+                                        <a href="/akademik" className="text-[#19243A] block group-hover:text-[#1f58d4] group-hover:scale-110 transition">Akademik</a>
                                     </li>
                                     <div className="garis"></div>
                                     <li className="group py-2">
-                                        <a href="#home" className="text-[#19243A] block group-hover:text-[#1f58d4] group-hover:scale-110 transition">FAQ</a>
+                                        <a href="/faq" className="text-[#19243A] block group-hover:text-[#1f58d4] group-hover:scale-110 transition">FAQ</a>
                                     </li>
                                 </ul>
                             </nav>

@@ -1,7 +1,7 @@
 export default function HomeInfo() {
     return (
         <>
-            <section id="news" className="w-full relative min-h-screen flex flex-col items-center justify-center p-16 gap-10 md:gap-16">
+            <section id="news" className="w-full relative min-h-screen flex flex-col items-center justify-center p-10 md:p-16 gap-10 md:gap-16">
                 <div className="w-full text-center">
                     <h2 className="bg-linear-to-b from-white to-[#F4E06D] bg-clip-text text-transparent font-bold text-4xl md:text-7xl mb-5 font-helvetica">SSMI NEWS</h2>
                     <p className="text-xl md:text-3xl text-[#F1F5FF] font-roboto">

@@ -1,7 +1,7 @@
 export default function HomeBEM() {
     return (
         <>
-            <section id="bem" className="w-full min-h-screen flex flex-col md:flex-row-reverse items-center justify-center p-16 gap-10 md:gap-16">
+            <section id="bem" className="w-full min-h-screen flex flex-col md:flex-row-reverse items-center justify-center p-10 md:p-16 gap-10 md:gap-16">
                 <div className="w-full md:w-5/12">
                     <img src="./img/logo-lengkap.svg" alt="BEM SSMI" className="w-full min-h-full" />
                 </div>

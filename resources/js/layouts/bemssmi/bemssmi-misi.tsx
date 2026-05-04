@@ -1,7 +1,7 @@
 export default function BemMisi() {
     return (
         <>
-        <section id="ssmi-misi" className="w-full h-min-screen flex flex-col items-start justify-center p-5 md:p-16 mt-16 md:m-0">
+        <section id="ssmi-misi" className="w-full h-min-screen flex flex-col items-start justify-center p-10 md:p-16 mt-16 md:m-0">
             <div className="w-full bg-linear-to-b from-white to-[#F4E06D] bg-clip-text text-transparent text-3xl md:text-5xl font-helvetica font-bold">
                 Misi BEM SSMI?
             </div>

@@ -1,7 +1,7 @@
 export default function HomeLogo() {
     return (
         <>
-            <section id="makna-logo" className="w-full min-h-screen flex flex-col md:flex-row items-center justify-center p-16 gap-10 md:gap-16">
+            <section id="makna-logo" className="w-full min-h-screen flex flex-col md:flex-row items-center justify-center p-10 md:p-16 gap-10 md:gap-16">
                 <div className="w-full md:w-5/12">
                     <img src="./img/logo-lengkap.svg" alt="Makna Logo" className="w-full" />
                 </div>

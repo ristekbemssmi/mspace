@@ -1,7 +1,7 @@
 export default function BemLogo() {
     return (
         <>
-            <section id="ssmi-logo" className="p-5 sm:p-14 md:p-16">
+            <section id="ssmi-logo" className="p-10 sm:p-14 md:p-16">
                 <div className="font-bold bg-linear-to-b from-white to-[#F4E06D] bg-clip-text text-transparent text-3xl md:text-5xl pb-3 text-center">Makna Logo Berdikari</div>
                 <div className="w-full flex flex-col md:flex-row-reverse items-center justify-center gap-10 md:gap-16">
                     <div className="w-full md:w-5/12">

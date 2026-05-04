@@ -2,7 +2,7 @@ export default function HomeVisi() {
     return (
         <>
             <section id="visi">
-                <div className="w-full p-16 pt-48 text-center font-helvetica font-bold">
+                <div className="w-full p-10 md:p-16 md:pt-48 text-center font-helvetica font-bold">
                     <div className="bg-linear-to-b from-white to-[#F4E06D] bg-clip-text text-transparent text-2xl md:text-5xl">
                         Sekolah Sains<br />
                         Data Matematika dan Informatika

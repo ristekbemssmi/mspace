@@ -15,7 +15,7 @@ export default function Home() {
                 <link href="https://fonts.googleapis.com" rel="stylesheet" />
                 <link href="https://fonts.cdnfonts.com/css/helvetica-255" rel="stylesheet" />
             </Head>
-            <main className="mx-auto max-w-screen bg-[url(./../../public/img/bg.svg)] bg-center bg-repeat-space bg-auto">
+            <main className="mx-auto max-w-screen bg-[url(./../../public/img/bg.svg)] bg-center bg-repeat bg-auto [&_p]:leading-5 sm:[&_p]:leading-relaxed">
 
                 {/* Visi dan Misi */}
                 <HomeVisi>

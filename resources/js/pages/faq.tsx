@@ -1,3 +1,4 @@
+import React from 'react';
 import { Head } from '@inertiajs/react';
 import FaqPenjelasan from '@/layouts/faq/faq-penjelasan';
 import FaqPertanyaan from '@/layouts/faq/faq-pertanyaan';
@@ -5,7 +6,7 @@ import HeaderLayout from '@/layouts/header';
 import FaqSearch from '@/layouts/faq/faq-search';
 
 
-export default function faq() {
+export default function faq({ faqs = [] }: { faqs?: any[] }) {
     return (
         <>
             <Head title='FAQ'>
@@ -23,7 +24,7 @@ export default function faq() {
                 </FaqPenjelasan>
 
                 {/* Pertanyaan */}
-                <FaqPertanyaan>
+                <FaqPertanyaan faqs={faqs}>
                 </FaqPertanyaan>
 
             </main>

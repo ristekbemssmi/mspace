@@ -27,9 +27,9 @@ export default function HeaderLayout({ children }: { children: ReactNode }) {
     return (
         <>
             <header className={`absolute mx-auto top-0 left-0 w-full flex items-center z-50 transition-all
-                    ${isScrolled 
-                        ? 'fixed sm:px-4 sm:py-0' 
-                        : 'absolute sm:px-8 sm:py-6'}`}>
+                    ${isScrolled
+                    ? 'fixed sm:px-4 sm:py-0'
+                    : 'absolute sm:px-8 sm:py-6'}`}>
                 <div className={`w-full bg-linear-to-b from-white to-[#F4E06D] shadow-xl/30 transition-all
                     ${isScrolled ? 'sm:rounded-b-2xl' : 'sm:rounded-2xl'}`}>
                     <div className="flex items-center justify-between relative p-4">

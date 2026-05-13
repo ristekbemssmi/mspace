@@ -99,8 +99,8 @@ export default function AkademikKalender() {
 
     return (
         <>
-            <section className="p-10 pt-48">
-                <div className="pb-5 text-center bg-linear-to-b dark:from-white dark:to-[#F4E06D] from-[#324879] to-[#19243A] bg-clip-text text-transparent text-2xl md:text-5xl font-bold">
+            <section id="akademik-kalender" className="layout">
+                <div className="text-center title">
                     Kalender Akademik
                 </div>
                 <div className="max-w-4xl mx-auto shadow-2xl">

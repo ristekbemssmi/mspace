@@ -9,7 +9,7 @@ const FaqItem = ({ pertanyaan, jawaban }: { pertanyaan: string, jawaban: string 
                 className="flex w-full bg-linear-to-b from-white to-[#F4E06D] to-200% rounded-2xl p-5 border-2 border-[#19243A] justify-between items-center cursor-pointer hover:opacity-90"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <p className="text-lg md:text-2xl text-left text-black font-normal pr-4">
+                <p className="text-left paragraf-dark">
                     {pertanyaan}
                 </p>
                 <span className="text-[#19243A] transition flex items-center justify-center">
@@ -20,7 +20,7 @@ const FaqItem = ({ pertanyaan, jawaban }: { pertanyaan: string, jawaban: string 
                 <div className="overflow-hidden">
                     <div className="px-5 md:px-10 bg-transparent rounded-lg w-full">
                         <div className="p-6 bg-white border-x-2 border-b-2 border-[#19243A] rounded-b-2xl">
-                            <p className="text-justify text-lg md:text-2xl text-black font-normal whitespace-pre-wrap">
+                            <p className="text-justify whitespace-pre-wrap paragraf-dark">
                                 {jawaban}
                             </p>
                         </div>
@@ -34,29 +34,27 @@ const FaqItem = ({ pertanyaan, jawaban }: { pertanyaan: string, jawaban: string 
 export default function FaqPertanyaan({ faqs = [] }: { faqs?: any[] }) {
     return (
         <>
-            <section id="faq-pertanyaan">
-                <div className="p-10 md:p-16 text-center font-helvetica mx-auto">
-                    <div className="flex flex-col gap-10 bg-[#FCF8DC] rounded-4xl p-5 md:p-10">
-                        <div className="pb-2 bg-linear-to-b from-[#324879] to-[#19243A] bg-clip-text text-transparent font-black text-2xl md:text-5xl">
-                            Pertanyaan yang<br className="hidden md:block" />
-                            sering diucapkan
-                        </div>
-
-                        <div className="flex flex-col gap-6">
-                            {Array.isArray(faqs) && faqs.length > 0 ? (
-                                faqs.map((faq, index) => (
-                                    <FaqItem
-                                        key={faq.id || index}
-                                        pertanyaan={faq.pertanyaan}
-                                        jawaban={faq.jawaban}
-                                    />
-                                ))
-                            ) : (
-                                <p className="text-black/50 py-10">Belum ada FAQ yang tersedia saat ini.</p>
-                            )}
-                        </div>
-
+            <section id="faq-pertanyaan" className="layout">
+                <div className="flex flex-col gap-10 bg-[#FCF8DC] rounded-4xl p-5 md:p-10">
+                    <div className="text-center title-dark">
+                        Pertanyaan yang <br />
+                        sering diucapkan
                     </div>
+
+                    <div className="flex flex-col gap-6">
+                        {Array.isArray(faqs) && faqs.length > 0 ? (
+                            faqs.map((faq, index) => (
+                                <FaqItem
+                                    key={faq.id || index}
+                                    pertanyaan={faq.pertanyaan}
+                                    jawaban={faq.jawaban}
+                                />
+                            ))
+                        ) : (
+                            <p className="text-center paragraf-dark">Belum ada pertanyaan terkait yang tersedia saat ini.</p>
+                        )}
+                    </div>
+
                 </div>
             </section>
         </>

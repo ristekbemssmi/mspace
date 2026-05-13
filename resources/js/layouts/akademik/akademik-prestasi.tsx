@@ -3,7 +3,7 @@ export default function AkademikPrestasi() {
         <>
             <section id="akademik-prestasi" className="w-full relative min-h-screen flex flex-col items-center justify-center p-10 md:p-16 gap-10 md:gap-16">
                 <div className="w-full text-center">
-                    <h2 className="bg-linear-to-b from-white to-[#F4E06D] bg-clip-text text-transparent font-bold text-4xl md:text-7xl mb-5 font-helvetica">
+                    <h2 className="title">
                         Prestasi KM SSMI
                     </h2>
                 </div>

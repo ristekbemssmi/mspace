@@ -19,11 +19,27 @@ return new class extends Migration
             $table->string('telepon')->nullable();
             $table->string('name');
             $table->string('nim')->unique();
-            $table->foreignId('idbirdept')->references('idbirdept')->on('birdepts');
-            $table->string('jabatan');
+            $table->enum('prodi', [
+                'Statistika dan Sains Data',
+                'Matematika',
+                'Aktuaria',
+                'Ilmu Komputer',
+                'Kecerdasan Buatan'
+            ])->nullable();
             $table->timestamp('login_terakhir')->nullable();
             $table->rememberToken();
             $table->timestamps();
+        });
+
+        Schema::create('users_bem', function (Blueprint $table) {
+            $table->foreignId('id')->primary()->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('idbirdept')->references('idbirdept')->on('birdepts');
+            $table->string('jabatan');
+        });
+
+        Schema::create('users_umum', function (Blueprint $table) {
+            $table->foreignId('id')->primary()->references('id')->on('users')->onDelete('cascade');
+            // Tambahan atribut spesifik user umum jika ada
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -47,8 +63,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users_umum');
+        Schema::dropIfExists('users_bem');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

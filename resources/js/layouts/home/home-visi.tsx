@@ -1,21 +1,24 @@
+import { CircleChevronRight } from 'lucide-react';
+
 export default function HomeVisi() {
     return (
         <>
-            <section id="visi">
-                <div className="w-full p-10 md:p-16 md:pt-48 text-center font-helvetica font-bold">
-                    <div className="bg-linear-to-b from-white to-[#F4E06D] bg-clip-text text-transparent text-2xl md:text-5xl">
-                        Sekolah Sains<br />
-                        Data Matematika dan Informatika
+            <section id="home-visi" className="w-full flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16 layout">
+                <div className="w-full md:w-5/12">
+                    <img src="img/fotbar.png" className="w-full rounded-3xl bg-cover bg-center" alt="Foto Anggota BEM SSMI" />
+                </div>
+                <div className="w-full md:w-7/12">
+                    <div className="text-left title">
+                        Apa itu SSMI ?
                     </div>
-                    <p className="text-lg md:text-2xl text-[#F1F5FF] font-normal mt-4">
-                        Dapatkan Informasi Seputar SSMI melalui website ini
+                    <p className="text-justify paragraf">
+                        Sekolah Sains Data, Matematika, dan Informatika (SSMI) IPB University resmi
+                        berdiri pada 22 Maret 2024. Sekolah ini terdiri dari program studi Statistika dan Sains Data, Matematika, Ilmu Komputer, Aktuaria, dan Kecerdasan Buatan.
+                        Pembentukan sekolah ini bertujuan untuk menjadikan IPB University sebagai pelopor dalam pengembangan sains data dan pemanfaatan teknologi kecerdasan buatan untuk memajukan pendidikan dan perekonomian Indonesia.
                     </p>
+
                 </div>
-                <div className="w-full flex items-center justify-center p-16 bg-linear-to-b from-white to-[#F4E06D] bg-clip-text text-transparent text-3xl md:text-6xl text-center font-helvetica font-bold">
-                    Merajut Langkah,<br />
-                    Mengukir Arah
-                </div>
-            </section>
+            </section >
         </>
     );
 }

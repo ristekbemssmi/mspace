@@ -14,6 +14,14 @@ class ProgramKerjaSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get valid Birdept and User
+        $birdept = \App\Models\Birdept::first();
+        $user = \App\Models\User::first();
+
+        if (!$birdept || !$user) {
+            throw new \Exception('Seeding failed: Please ensure birdepts and users tables have at least one record.');
+        }
+
         // Clear existing data
         \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \App\Models\InformasiProker::truncate();
@@ -32,8 +40,8 @@ class ProgramKerjaSeeder extends Seeder
 
         foreach ($prokers as $p) {
             $informasi = \App\Models\Informasi::create([
-                'idbirdept' => 1,
-                'iduser' => 1,
+                'idbirdept' => $birdept->idbirdept,
+                'iduser' => $user->id,
                 'judul' => $p['nama'],
                 'deskripsi' => $p['desc'],
                 'status' => 'published',
@@ -52,7 +60,7 @@ class ProgramKerjaSeeder extends Seeder
             // Add sample committee
             \DB::table('panitia_proker')->insert([
                 'id_proker' => $informasi->id,
-                'user_id' => 1,
+                'user_id' => $user->id,
                 'jabatan' => 'Penanggung Jawab',
                 'divisi' => null,
             ]);

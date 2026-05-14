@@ -1,0 +1,131 @@
+{
+  "_chevron-right-ClqW4AY4.js": {
+    "file": "assets/chevron-right-ClqW4AY4.js",
+    "name": "chevron-right",
+    "imports": [
+      "_createLucideIcon-C0mxDRln.js"
+    ]
+  },
+  "_createLucideIcon-C0mxDRln.js": {
+    "file": "assets/createLucideIcon-C0mxDRln.js",
+    "name": "createLucideIcon",
+    "imports": [
+      "resources/js/app.tsx"
+    ]
+  },
+  "_header-D8YimhOX.js": {
+    "file": "assets/header-D8YimhOX.js",
+    "name": "header",
+    "imports": [
+      "resources/js/app.tsx"
+    ]
+  },
+  "_x-lPpwqQlf.js": {
+    "file": "assets/x-lPpwqQlf.js",
+    "name": "x",
+    "imports": [
+      "_createLucideIcon-C0mxDRln.js"
+    ]
+  },
+  "node_modules/pdfjs-dist/build/pdf.worker.min.mjs": {
+    "file": "assets/pdf.worker.min-qwK7q_zL.mjs",
+    "src": "node_modules/pdfjs-dist/build/pdf.worker.min.mjs"
+  },
+  "public/img/bg-modal.svg": {
+    "file": "assets/bg-modal-bB-Gg1UJ.svg",
+    "src": "public/img/bg-modal.svg"
+  },
+  "public/img/bg.svg": {
+    "file": "assets/bg-DSZMNUf7.svg",
+    "src": "public/img/bg.svg"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-Cal1hEcI.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "assets": [
+      "assets/bg-modal-bB-Gg1UJ.svg",
+      "assets/bg-DSZMNUf7.svg"
+    ]
+  },
+  "resources/js/app.tsx": {
+    "file": "assets/app-CR2wRtBG.js",
+    "name": "app",
+    "src": "resources/js/app.tsx",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/pages/akademik.tsx",
+      "resources/js/pages/beasiswa.tsx",
+      "resources/js/pages/bemssmi.tsx",
+      "resources/js/pages/faq.tsx",
+      "resources/js/pages/home.tsx"
+    ]
+  },
+  "resources/js/pages/akademik.tsx": {
+    "file": "assets/akademik-CGpdkAJ0.js",
+    "name": "akademik",
+    "src": "resources/js/pages/akademik.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_createLucideIcon-C0mxDRln.js",
+      "_chevron-right-ClqW4AY4.js",
+      "_header-D8YimhOX.js"
+    ],
+    "css": [
+      "assets/akademik-rptWOpCb.css"
+    ],
+    "assets": [
+      "assets/pdf.worker.min-qwK7q_zL.mjs"
+    ]
+  },
+  "resources/js/pages/beasiswa.tsx": {
+    "file": "assets/beasiswa-CVRljBhh.js",
+    "name": "beasiswa",
+    "src": "resources/js/pages/beasiswa.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_createLucideIcon-C0mxDRln.js",
+      "_x-lPpwqQlf.js",
+      "_header-D8YimhOX.js"
+    ]
+  },
+  "resources/js/pages/bemssmi.tsx": {
+    "file": "assets/bemssmi-CLtVmevh.js",
+    "name": "bemssmi",
+    "src": "resources/js/pages/bemssmi.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_x-lPpwqQlf.js",
+      "_header-D8YimhOX.js"
+    ]
+  },
+  "resources/js/pages/faq.tsx": {
+    "file": "assets/faq-BQKSImjA.js",
+    "name": "faq",
+    "src": "resources/js/pages/faq.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_header-D8YimhOX.js"
+    ]
+  },
+  "resources/js/pages/home.tsx": {
+    "file": "assets/home-rpc0e1bo.js",
+    "name": "home",
+    "src": "resources/js/pages/home.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_createLucideIcon-C0mxDRln.js",
+      "_chevron-right-ClqW4AY4.js",
+      "_header-D8YimhOX.js"
+    ]
+  }
+}

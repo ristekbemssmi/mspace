@@ -13,12 +13,10 @@
 
 
         @viteReactRefresh
-        @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
-        <x-inertia::head>
-            <title>{{ config('app.name', 'M-SPACE') }}</title>
-        </x-inertia::head>
+        @vite(['resources/css/app.css', 'resources/js/app.tsx'])
+        @inertiaHead
     </head>
     <body class="min-h-screen bg-linear-to-b from-[#324879] to-[#1E2E50]">
-        <x-inertia::app />
+        @inertia
     </body>
 </html>

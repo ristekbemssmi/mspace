@@ -8,7 +8,8 @@
         <link rel="icon" href="./img/logo.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="./img/logo.svg">
 
-        <link href="https://fonts.googleapis.com" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.cdnfonts.com/css/helvetica-255" rel="stylesheet">
 
 

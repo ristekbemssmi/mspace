@@ -17,7 +17,7 @@ class BeasiswaController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('beasiswa', [
+        return Inertia::render('Beasiswa/Index', [
             'beasiswaData' => $beasiswa
         ]);
     }

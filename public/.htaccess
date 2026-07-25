@@ -23,3 +23,12 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    # Cache Vite build assets (immutable hash) for 1 year
+    <FilesMatch "\.(css|js|woff2|woff|ttf|svg|png|jpg|jpeg|gif|webp|avif|ico)$">
+        ExpiresDefault "access plus 1 year"
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>

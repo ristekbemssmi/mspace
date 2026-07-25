@@ -28,7 +28,7 @@ class BirdeptController extends Controller
     {
         $birdepts = Birdept::all();
 
-        return Inertia::render('bemssmi', [
+        return Inertia::render('Bemssmi/Index', [
             'birdepts' => $birdepts
         ]);
     }
@@ -36,9 +36,15 @@ class BirdeptController extends Controller
     /**
      * Menampilkan detail satu Biro/Departemen
      */
-    public function show($id): Response
+    public function show($slug): Response
     {
-        $birdept = Birdept::with(['users', 'informasi'])->findOrFail($id);
+        $birdept = Birdept::with([
+            'informasi' => function ($query) {
+                $query->where('jenis_informasi', 'proker')
+                      ->where('status', 'published')
+                      ->orderBy('created_at', 'desc');
+            }
+        ])->where('nama_panggilan', $slug)->firstOrFail();
 
         return Inertia::render('Birdept/Show', [
             'birdept' => $birdept

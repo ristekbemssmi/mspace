@@ -34,8 +34,8 @@ class Birdept extends Model
     /**
      * Relasi ke Informasi
      */
-    public function informasi()
+    public function informasi(): HasMany
     {
-        // return $this->hasMany(Informasi::class, 'idbirdept', 'idbirdept');
+        return $this->hasMany(Informasi::class, 'idbirdept', 'idbirdept');
     }
 }

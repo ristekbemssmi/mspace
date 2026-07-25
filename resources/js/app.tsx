@@ -28,8 +28,12 @@ createInertiaApp({
     page: pageData,
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) => {
-        const pages = import.meta.glob('./pages/**/*.tsx', { eager: true });
-        return (pages[`./pages/${name}.tsx`] as any).default;
+        const pages = import.meta.glob('./Pages/**/*.tsx');
+        const importPage = pages[`./Pages/${name}.tsx`];
+        if (!importPage) {
+            throw new Error(`Page not found: ./Pages/${name}.tsx`);
+        }
+        return importPage().then((module: any) => module.default);
     },
     setup({ el, App, props }) {
         createRoot(el).render(<App {...props} />);

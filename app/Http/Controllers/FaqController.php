@@ -15,7 +15,7 @@ class FaqController extends Controller
             ->where('is_active', true)
             ->orderBy('urutan', 'asc')
             ->get();
-        return Inertia::render('faq', [
+        return Inertia::render('Faq/Index', [
             'faqs' => $faqs,
         ]);
     }

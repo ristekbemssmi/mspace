@@ -12,10 +12,15 @@ Route::get('/bemssmi', [BirdeptController::class, 'bemssmi'])->name('bemssmi');
 
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 
-Route::inertia('/akademik', 'akademik')->name('akademik');
+Route::inertia('/akademik', 'Akademik/Index')->name('akademik');
 
 Route::get('/informasi-beasiswa', [BeasiswaController::class, 'index'])->name('informasi-beasiswa');
+Route::inertia('/informasi-wisuda', 'Wisuda/Index')->name('informasi-wisuda');
+Route::inertia('/informasi-alumni', 'Alumni/Index')->name('informasi-alumni');
+Route::inertia('/informasi-magang', 'Magang/Index')->name('informasi-magang');
+Route::inertia('/informasi-kegiatan', 'Kegiatan/Index')->name('informasi-kegiatan');
+
 
 
 // Route::get('/birdept', [BirdeptController::class, 'index'])->name('birdept.index');
-// Route::get('/birdept/{id}', [BirdeptController::class, 'show'])->name('birdept.show');
+Route::get('/birdept/{slug}', [BirdeptController::class, 'show'])->name('birdept.show');

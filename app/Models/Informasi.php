@@ -32,6 +32,16 @@ class Informasi extends Model
         return $this->hasOne(InformasiBeasiswa::class, 'id');
     }
 
+    public function birdept()
+    {
+        return $this->belongsTo(Birdept::class, 'idbirdept', 'idbirdept');
+    }
+
+    public function proker()
+    {
+        return $this->hasOne(InformasiProker::class, 'id');
+    }
+
     public function scopePublished($query)
     {
         return $query->where('status', 'published');

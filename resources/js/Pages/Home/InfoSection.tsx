@@ -105,44 +105,52 @@ export default function InfoSection({ data = [] }: { data: NewsItem[] }) {
                     </p>
                 </div>
 
-                <div className="relative w-full flex items-center justify-center h-[580px] md:h-[520px] overflow-visible">
-                    <div className="relative w-full max-w-5xl flex items-center justify-center h-full">
-                        {newsData.map((item, index) => renderCard(item, index))}
-                    </div>
-
-                    <div className="absolute -bottom-24 flex items-center gap-6">
-                        <button
-                            onClick={prevSlide}
-                            type="button"
-                            aria-label="Slide sebelumnya"
-                            className="p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all shadow-xl backdrop-blur-md"
-                        >
-                            <ChevronLeft size={24} />
-                        </button>
-
-                        <div className="flex gap-3">
-                            {newsData.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setCurrentIndex(index)}
-                                    type="button"
-                                    aria-label={`Ke slide ${index + 1}`}
-                                    className={`transition-all duration-300 rounded-full h-2.5 ${index === currentIndex ? 'w-10 bg-[#F4E06D]' : 'w-2.5 bg-white/20 hover:bg-white/40'
-                                        }`}
-                                ></button>
-                            ))}
+                {newsData.length > 0 ? (
+                    <div className="relative w-full flex items-center justify-center h-[580px] md:h-[520px] overflow-visible">
+                        <div className="relative w-full max-w-5xl flex items-center justify-center h-full">
+                            {newsData.map((item, index) => renderCard(item, index))}
                         </div>
 
-                        <button
-                            onClick={nextSlide}
-                            type="button"
-                            aria-label="Slide berikutnya"
-                            className="p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all shadow-xl backdrop-blur-md"
-                        >
-                            <ChevronRight size={24} />
-                        </button>
+                        <div className="absolute -bottom-24 flex items-center gap-6">
+                            <button
+                                onClick={prevSlide}
+                                type="button"
+                                aria-label="Slide sebelumnya"
+                                className="p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all shadow-xl backdrop-blur-md cursor-pointer"
+                            >
+                                <ChevronLeft size={24} />
+                            </button>
+
+                            <div className="flex gap-3">
+                                {newsData.map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setCurrentIndex(index)}
+                                        type="button"
+                                        aria-label={`Ke slide ${index + 1}`}
+                                        className={`transition-all duration-300 rounded-full h-2.5 cursor-pointer ${index === currentIndex ? 'w-10 bg-[#F4E06D]' : 'w-2.5 bg-white/20 hover:bg-white/40'
+                                            }`}
+                                    ></button>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={nextSlide}
+                                type="button"
+                                aria-label="Slide berikutnya"
+                                className="p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all shadow-xl backdrop-blur-md cursor-pointer"
+                            >
+                                <ChevronRight size={24} />
+                            </button>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="w-full max-w-3xl bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-12 text-center text-white/80 shadow-2xl">
+                        <p className="text-base md:text-lg font-roboto italic">
+                            Belum ada informasi dan kegiatan terbaru yang dipublikasikan saat ini.
+                        </p>
+                    </div>
+                )}
             </div>
         </section>
     );

@@ -15,8 +15,8 @@ class HomeController extends Controller
     {
         $news = Informasi::published()
             ->active()
-            ->whereNotIn('jenis_informasi', ['beasiswa'])
-            ->orderBy('tanggal_kadaluarsa', 'asc')
+            ->whereNotIn('jenis_informasi', ['beasiswa', 'proker'])
+            ->orderBy('waktu_publikasi', 'desc')
             ->get()
             ->map(function ($item) {
                 $imagePath = "img/informasi/{$item->id}.webp";
@@ -54,18 +54,51 @@ class HomeController extends Controller
 
         $faqs = Faq::where('is_active', true)->take(3)->get();
 
-        $prokers = InformasiProker::with('parent')->get()
-            ->map(function ($proker) {
+        $flagshipNames = [
+            'M Care',
+            'MISSION 2.0',
+            'Mignight',
+            'SPECTRA',
+            'Pojok Seni',
+            'Tekno Karsa 2.0',
+        ];
+
+        $prokersList = Informasi::published()
+            ->where('jenis_informasi', 'proker')
+            ->with(['birdept', 'proker'])
+            ->get();
+
+        $prokers = $prokersList->sortBy(function ($item) use ($flagshipNames) {
+            $index = array_search($item->judul, $flagshipNames);
+            return $index !== false ? $index : 999;
+        })->take(6)->values()->map(function ($proker, $index) {
+            $imageMap = [
+                'M Care' => '/img/proker/1.png',
+                'MISSION 2.0' => '/img/proker/2.png',
+                'MISSION' => '/img/proker/2.png',
+                'Mignight' => '/img/proker/3.png',
+                'SPECTRA' => '/img/proker/4.png',
+                'SPECTRA (Sport and Art Competition Arena)' => '/img/proker/4.png',
+                'Pojok Seni' => '/img/proker/5.png',
+                'Tekno Karsa 2.0' => '/img/proker/6.png',
+                'Tekno Karsa' => '/img/proker/6.png',
+            ];
+
+            $img = $imageMap[$proker->judul] ?? null;
+            if (!$img) {
                 $imagePath = "img/proker/{$proker->id}.webp";
                 if (!file_exists(public_path($imagePath))) {
                     $imagePath = "img/proker/{$proker->id}.png";
                 }
                 if (!file_exists(public_path($imagePath))) {
-                    $imagePath = "img/fotbar.webp";
+                    $imgNumber = ($index % 6) + 1;
+                    $imagePath = "img/proker/{$imgNumber}.png";
                 }
-                $proker->image_url = '/' . $imagePath;
-                return $proker;
-            });
+                $img = '/' . $imagePath;
+            }
+            $proker->image_url = $img;
+            return $proker;
+        });
 
         return Inertia::render('Home/Index', [
             'news' => $news,

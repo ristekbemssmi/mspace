@@ -2,7 +2,9 @@
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 use Laravel\Fortify\Features;
 
 beforeEach(function () {
@@ -75,4 +77,14 @@ test('password cannot be reset with invalid token', function () {
     ]);
 
     $response->assertSessionHasErrors('email');
+});
+
+test('signed in recipient can open and use a reset token once', function () {
+    $user = User::factory()->create();
+    $token = Password::createToken($user);
+    $this->actingAs($user)->get(route('password.reset', ['token' => $token, 'email' => $user->email]))->assertOk();
+    $payload = ['token' => $token, 'email' => $user->email, 'password' => 'new-password123', 'password_confirmation' => 'new-password123'];
+    $this->post(route('password.update'), $payload)->assertSessionHasNoErrors();
+    expect(Hash::check('new-password123', $user->fresh()->password))->toBeTrue();
+    $this->post(route('password.update'), $payload)->assertSessionHasErrors('email');
 });

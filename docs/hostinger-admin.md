@@ -36,3 +36,13 @@ Dashboard menulis gambar ke `storage/app/information-media` milik situs publik, 
 Build dashboard dari folder `admin` dengan `npm ci` lalu `npm run build`. Commit hasil `admin/public/build` bersama source. Dependency PHP dashboard dipasang dengan Composer dari folder `admin`; dependency publik dipasang dari root repo.
 
 Jangan commit `.env`, database lokal, log, atau session. Folder admin ini tidak berisi konfigurasi rahasia dari proyek lama.
+
+## Pembaruan password melalui email
+
+- Unggah juga seluruh `admin/public/build` terbaru beserta `manifest.json`.
+- Di `.env` admin gunakan `APP_URL=https://admin.bemssmi.com` dan `APP_DEBUG=false`.
+- Gunakan `VITE_PUBLIC_URL=https://bemssmi.com` ketika build admin; variabel VITE dibaca saat build.
+- Konfigurasikan `MAIL_MAILER=smtp`, host, port, username, password, dan alamat pengirim sesuai penyedia email. `MAIL_MAILER=log` tidak mengirim email sungguhan.
+- Setelah deployment, jalankan `php artisan optimize:clear` lalu `php artisan config:cache` dari folder aplikasi admin.
+- Dari Pengaturan > Keamanan, tombol Ganti password via email mengirim tautan hanya ke email akun yang sedang masuk. Tautan dapat dibuka saat masih login dan hanya dapat digunakan sekali.
+- Jika gagal, periksa pesan pada form serta `admin/storage/logs/laravel.log`. Jangan memublikasikan `.env` atau token reset.

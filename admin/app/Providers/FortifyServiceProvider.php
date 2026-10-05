@@ -28,6 +28,15 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Reset tokens remain mandatory for recipients who are already signed in.
+        $this->app->booted(function () {
+            foreach (app('router')->getRoutes() as $route) {
+                if (in_array($route->getName(), ['password.reset', 'password.update'], true)) {
+                    $route->withoutMiddleware(['guest:'.config('fortify.guard')]);
+                }
+            }
+        });
+
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();

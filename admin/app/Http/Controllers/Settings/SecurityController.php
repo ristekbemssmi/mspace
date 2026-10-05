@@ -3,34 +3,24 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\PasswordUpdateRequest;
 use App\Http\Requests\Settings\TwoFactorAuthenticationRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
 
-class SecurityController extends Controller implements HasMiddleware
+class SecurityController extends Controller
 {
-    /**
-     * Get the middleware that should be assigned to the controller.
-     */
-    public static function middleware(): array
-    {
-        return Features::canManageTwoFactorAuthentication()
-            && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword')
-                ? [new Middleware('password.confirm', only: ['edit'])]
-                : [];
-    }
-
     /**
      * Show the user's security settings page.
      */
     public function edit(TwoFactorAuthenticationRequest $request): Response
     {
         $props = [
+            'status' => $request->session()->get('status'),
+            'email' => $request->user()->email,
             'canManageTwoFactor' => Features::canManageTwoFactorAuthentication(),
         ];
 
@@ -45,14 +35,22 @@ class SecurityController extends Controller implements HasMiddleware
     }
 
     /**
-     * Update the user's password.
+     * Send a reset link to the authenticated account only.
      */
-    public function update(PasswordUpdateRequest $request): RedirectResponse
+    public function sendResetLink(Request $request): RedirectResponse
     {
-        $request->user()->update([
-            'password' => $request->password,
-        ]);
+        try {
+            $status = Password::broker(config('fortify.passwords'))->sendResetLink([
+                'email' => $request->user()->email,
+            ]);
+        } catch (\Throwable $exception) {
+            report($exception);
 
-        return back();
+            return back()->withErrors(['email' => 'Email belum dapat dikirim. Hubungi administrator untuk memeriksa konfigurasi email.']);
+        }
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('status', 'Tautan ganti password telah dikirim ke email terdaftar. Periksa kotak masuk atau spam.')
+            : back()->withErrors(['email' => __($status)]);
     }
 }

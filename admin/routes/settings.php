@@ -16,9 +16,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('settings/security', [SecurityController::class, 'edit'])->name('security.edit');
 
-    Route::put('settings/password', [SecurityController::class, 'update'])
+    Route::post('settings/password/reset-link', [SecurityController::class, 'sendResetLink'])
         ->middleware('throttle:6,1')
-        ->name('user-password.update');
+        ->name('security.password.email');
 
     Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
 });

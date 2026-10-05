@@ -33,7 +33,7 @@ export default function AppLayout({ children }: { breadcrumbs?: BreadcrumbItem[]
                         <span className="leading-tight"><strong className="block text-lg font-black tracking-tight text-[#f4e06d]">MSPACE</strong><small className="block text-[11px] font-semibold uppercase tracking-[.2em] text-white/70">Ruang pengelola</small></span>
                     </Link>
                     <div className="flex items-center gap-3">
-                        <a href={import.meta.env.VITE_PUBLIC_URL || 'http://mspace.test'} target="_blank" rel="noopener noreferrer" className="hidden items-center gap-1 text-sm font-semibold text-[#f4e06d] hover:underline sm:inline-flex">Lihat situs publik <ArrowUpRight size={15} /></a>
+                        <a href={import.meta.env.VITE_PUBLIC_URL || 'https://bemssmi.com'} target="_blank" rel="noopener noreferrer" className="hidden items-center gap-1 text-sm font-semibold text-[#f4e06d] hover:underline sm:inline-flex">Lihat situs publik <ArrowUpRight size={15} /></a>
                         <details className="relative group">
                             <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full border border-white/25 bg-white/10 py-1.5 pl-1.5 pr-3 text-sm font-semibold marker:hidden hover:border-[#f4e06d]">
                                 <span className="grid h-8 w-8 place-items-center rounded-full bg-[#f4e06d] font-bold text-[#19243a]">{auth.user?.name?.charAt(0).toUpperCase() || 'M'}</span>

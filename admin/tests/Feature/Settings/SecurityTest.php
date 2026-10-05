@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Fortify\Features;
 
@@ -25,7 +27,7 @@ test('security page is displayed', function () {
         );
 });
 
-test('security page requires password confirmation when enabled', function () {
+test('security page allows email recovery without current password', function () {
     $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
 
     $user = User::factory()->create();
@@ -38,7 +40,7 @@ test('security page requires password confirmation when enabled', function () {
     $response = $this->actingAs($user)
         ->get(route('security.edit'));
 
-    $response->assertRedirect(route('password.confirm'));
+    $response->assertOk();
 });
 
 test('security page does not require password confirmation when disabled', function () {
@@ -77,38 +79,32 @@ test('security page renders without two factor when feature is disabled', functi
         );
 });
 
-test('password can be updated', function () {
+test('reset link is sent only to the signed in account', function () {
+    Notification::fake();
     $user = User::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->from(route('security.edit'))
-        ->put(route('user-password.update'), [
-            'current_password' => 'password',
-            'password' => 'new-password',
-            'password_confirmation' => 'new-password',
-        ]);
-
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('security.edit'));
-
-    expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
+    $other = User::factory()->create();
+    $this->actingAs($user)->from(route('security.edit'))
+        ->post(route('security.password.email'), ['email' => $other->email])
+        ->assertRedirect(route('security.edit'))->assertSessionHasNoErrors()->assertSessionHas('status');
+    Notification::assertSentTo($user, ResetPassword::class);
+    Notification::assertNotSentTo($other, ResetPassword::class);
 });
 
-test('correct password must be provided to update password', function () {
+test('guest cannot request a dashboard password reset', function () {
+    $this->post(route('security.password.email'))->assertRedirect(route('login'));
+});
+
+test('reset link requests are throttled by the password broker', function () {
+    Notification::fake();
     $user = User::factory()->create();
+    $this->actingAs($user)->post(route('security.password.email'))->assertSessionHasNoErrors();
+    $this->post(route('security.password.email'))->assertSessionHasErrors('email');
+    Notification::assertCount(1);
+});
 
-    $response = $this
-        ->actingAs($user)
-        ->from(route('security.edit'))
-        ->put(route('user-password.update'), [
-            'current_password' => 'wrong-password',
-            'password' => 'new-password',
-            'password_confirmation' => 'new-password',
-        ]);
-
-    $response
-        ->assertSessionHasErrors('current_password')
-        ->assertRedirect(route('security.edit'));
+test('mail failure is shown as a form error', function () {
+    $user = User::factory()->create();
+    Password::shouldReceive('broker')->once()->andReturnSelf();
+    Password::shouldReceive('sendResetLink')->once()->andThrow(new RuntimeException('Mail transport unavailable'));
+    $this->actingAs($user)->post(route('security.password.email'))->assertSessionHasErrors('email');
 });

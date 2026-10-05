@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\User;
+
+class UserPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return $user->hasAdminRole('admin');
+    }
+
+    public function create(User $user): bool
+    {
+        return $user->hasAdminRole('admin');
+    }
+
+    public function updateAny(User $user): bool
+    {
+        return $user->hasAdminRole('admin');
+    }
+
+    public function deleteAny(User $user): bool
+    {
+        return $user->hasAdminRole('admin');
+    }
+
+    public function import(User $user): bool
+    {
+        return $user->hasAdminRole('admin');
+    }
+
+    public function export(User $user): bool
+    {
+        return $user->hasAdminRole('admin');
+    }
+}

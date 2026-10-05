@@ -1,0 +1,10 @@
+import { Head, router } from '@inertiajs/react';
+import { useState } from 'react';
+
+type Account = { id: number; name: string; email: string; createdAt: string };
+
+export default function Approvals({ accounts }: { accounts: Account[] }) {
+    const [roles, setRoles] = useState<Record<number, string>>({});
+    const [busy, setBusy] = useState<number | null>(null);
+    return <><Head title="Persetujuan akun" /><div className="mb-7"><p className="text-xs font-black uppercase tracking-[.2em] text-[#324879]">Pengelolaan akses</p><h1 className="mt-2 text-3xl font-black">Persetujuan akun</h1><p className="mt-2 text-sm text-[#64759b]">Tinjau akun baru dan berikan peran sesuai tugasnya.</p></div><div className="rounded-2xl border border-[#e1e7f1] bg-white p-5 shadow-sm">{accounts.length === 0 ? <p className="py-12 text-center text-sm text-[#64759b]">Tidak ada akun yang menunggu persetujuan.</p> : <div className="divide-y divide-[#edf1f7]">{accounts.map(account => <div key={account.id} className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-bold">{account.name}</p><p className="text-sm text-[#64759b]">{account.email}</p><p className="mt-1 text-xs text-[#8a99b1]">Mendaftar {new Date(account.createdAt).toLocaleDateString('id-ID')}</p></div><div className="flex gap-2"><select aria-label={`Peran untuk ${account.name}`} value={roles[account.id] || 'viewer'} onChange={e => setRoles({ ...roles, [account.id]: e.target.value })} className="rounded-xl border border-[#cbd5e5] bg-white px-3 py-2 text-sm"><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="admin">Admin</option></select><button type="button" disabled={busy === account.id} onClick={() => { if (!window.confirm(`Setujui ${account.name} sebagai ${roles[account.id] || 'viewer'}?`)) return; setBusy(account.id); router.post(`/admin/approvals/${account.id}`, { role: roles[account.id] || 'viewer' }, { onFinish: () => setBusy(null) }); }} className="rounded-xl bg-[#19243a] px-4 py-2 text-sm font-bold text-white disabled:opacity-50">Setujui</button></div></div>)}</div>}</div></>;
+}

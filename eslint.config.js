@@ -107,6 +107,7 @@ export default [
     },
     {
         ignores: [
+            'admin/**',
             'vendor',
             'node_modules',
             'public',

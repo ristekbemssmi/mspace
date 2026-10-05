@@ -33,6 +33,15 @@ php artisan optimize:clear
 
 Periksa `php artisan migrate:status` atau tabel `unitrequests` di phpMyAdmin. Jangan membuat tabelnya secara manual dan jangan menjalankan `migrate:fresh` pada database situs yang berisi data.
 
+Jika halaman persetujuan menampilkan peringatan bahwa pengajuan birdept belum tersedia, dashboard masih dapat menyetujui akun baru, tetapi migrasi di atas tetap harus dijalankan. Bila perintah migrasi menyatakan "Nothing to migrate" sementara tabel tidak ada, bandingkan database aktif dan catatan migrasi berikut melalui phpMyAdmin sebelum mengubah data apa pun:
+
+```sql
+SELECT DATABASE();
+SHOW TABLES LIKE 'unitrequests';
+SELECT migration, batch FROM migrations
+WHERE migration = '2026_10_05_000001_create_unit_requests_table';
+```
+
 ```bash
 php artisan optimize:clear
 php artisan config:cache
@@ -54,6 +63,8 @@ Jangan commit `.env`, database lokal, log, atau session. Folder admin ini tidak 
 - Di `.env` admin gunakan `APP_URL=https://admin.bemssmi.com` dan `APP_DEBUG=false`.
 - Gunakan `VITE_PUBLIC_URL=https://bemssmi.com` ketika build admin; variabel VITE dibaca saat build.
 - Konfigurasikan `MAIL_MAILER=smtp`, host, port, username, password, dan alamat pengirim sesuai penyedia email. `MAIL_MAILER=log` tidak mengirim email sungguhan.
+- Setelah mengubah pengaturan email di `admin/.env`, jalankan `php artisan optimize:clear` dan `php artisan config:cache` dari folder admin. Periksa juga folder spam serta `admin/storage/logs/laravel.log` jika SMTP melaporkan kegagalan. Jangan bagikan password SMTP atau isi `.env`.
+- Pembuatan akun dari halaman Pengguna mengirim email verifikasi dan tautan pengaturan password ke alamat akun baru. Jika email belum terkirim, perbaiki SMTP lalu gunakan tombol **Kirim ulang** pada baris pengguna; akun yang sudah dibuat tidak perlu dibuat ulang. Pendaftaran mandiri memakai email verifikasi Fortify dan dapat dikirim ulang dari halaman verifikasi setelah SMTP aktif.
 - Setelah deployment, jalankan `php artisan optimize:clear` lalu `php artisan config:cache` dari folder aplikasi admin.
 - Dari Pengaturan > Profil, tombol Ganti password via email mengirim tautan hanya ke email akun yang sedang masuk. Tautan dapat dibuka saat masih login dan hanya dapat digunakan sekali.
 - Jika gagal, periksa pesan pada form serta `admin/storage/logs/laravel.log`. Jangan memublikasikan `.env` atau token reset.

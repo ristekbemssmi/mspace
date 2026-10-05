@@ -6,7 +6,13 @@ import { Spinner } from '@/components/ui/spinner';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 
-export default function VerifyEmail({ status }: { status?: string }) {
+export default function VerifyEmail({
+    status,
+    deliveryAvailable,
+}: {
+    status?: string;
+    deliveryAvailable: boolean;
+}) {
     return (
         <>
             <Head title="Verifikasi email" />
@@ -17,10 +23,17 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 </div>
             )}
 
+            {!deliveryAvailable && (
+                <p role="alert" className="mb-4 text-center text-sm text-amber-200">
+                    Pengiriman email sementara belum tersedia. Hubungi Admin
+                    sebelum meminta tautan verifikasi baru.
+                </p>
+            )}
+
             <Form {...send.form()} className="space-y-6 text-center">
                 {({ processing }) => (
                     <>
-                        <Button disabled={processing} variant="secondary">
+                        <Button disabled={processing || !deliveryAvailable} variant="secondary">
                             {processing && <Spinner />}
                             Kirim ulang email verifikasi
                         </Button>

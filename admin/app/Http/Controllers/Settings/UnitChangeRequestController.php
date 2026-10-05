@@ -6,11 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\UnitChangeRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class UnitChangeRequestController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
+        if (! Schema::hasTable('unitrequests')) {
+            return back()->withErrors(['requestedUnitId' => 'Pengajuan birdept sementara belum tersedia. Hubungi Admin.']);
+        }
+
         $data = $request->validate([
             'requestedUnitId' => 'required|integer|exists:units,unitId',
             'requestedPosition' => 'required|string|max:255',

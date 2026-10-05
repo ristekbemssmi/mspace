@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,20 +21,25 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        $user = $request->user()->load(['userBem.birdept', 'unitChangeRequest.requestedUnit']);
+        $unitRequestsAvailable = Schema::hasTable('unitrequests');
+        $user = $request->user()->load($unitRequestsAvailable
+            ? ['userBem.birdept', 'unitChangeRequest.requestedUnit']
+            : ['userBem.birdept']);
+        $unitRequest = $unitRequestsAvailable ? $user->unitChangeRequest : null;
 
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
+            'unitRequestsAvailable' => $unitRequestsAvailable,
             'status' => $request->session()->get('status'),
             'profile' => [
                 ...$user->only(['name', 'email', 'username', 'studentNumber', 'phone', 'studyProgram', 'email_verified_at']),
                 'birdept' => $user->userBem?->birdept?->only(['unitId', 'name', 'abbreviation']),
                 'position' => $user->userBem?->position,
-                'unitRequest' => $user->unitChangeRequest ? [
-                    'requestedUnitId' => $user->unitChangeRequest->requestedUnitId,
-                    'requestedPosition' => $user->unitChangeRequest->requestedPosition,
-                    'status' => $user->unitChangeRequest->status,
-                    'unitName' => $user->unitChangeRequest->requestedUnit?->name,
+                'unitRequest' => $unitRequest ? [
+                    'requestedUnitId' => $unitRequest->requestedUnitId,
+                    'requestedPosition' => $unitRequest->requestedPosition,
+                    'status' => $unitRequest->status,
+                    'unitName' => $unitRequest->requestedUnit?->name,
                 ] : null,
             ],
             'units' => Birdept::select('unitId', 'name', 'abbreviation')->orderBy('name')->get(),

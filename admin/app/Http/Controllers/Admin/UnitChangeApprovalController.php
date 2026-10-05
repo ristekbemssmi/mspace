@@ -9,15 +9,20 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class UnitChangeApprovalController extends Controller
 {
-    public function update(Request $request, UnitChangeRequest $unitRequest): RedirectResponse
+    public function update(Request $request, int $unitRequest): RedirectResponse
     {
+        if (! Schema::hasTable('unitrequests')) {
+            return back()->withErrors(['birdept' => 'Persetujuan birdept belum tersedia. Jalankan migrasi dashboard admin.']);
+        }
+
         $decision = $request->validate(['decision' => 'required|in:approve,reject'])['decision'];
 
         DB::transaction(function () use ($unitRequest, $decision, $request): void {
-            $record = UnitChangeRequest::query()->lockForUpdate()->findOrFail($unitRequest->id);
+            $record = UnitChangeRequest::query()->lockForUpdate()->findOrFail($unitRequest);
             abort_unless($record->status === 'pending', 409);
 
             if ($decision === 'approve') {

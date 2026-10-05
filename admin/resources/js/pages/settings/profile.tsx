@@ -31,11 +31,13 @@ type ProfileData = {
 
 export default function Profile({
     mustVerifyEmail,
+    unitRequestsAvailable,
     status,
     profile,
     units,
 }: {
     mustVerifyEmail: boolean;
+    unitRequestsAvailable: boolean;
     status?: string;
     profile: ProfileData;
     units: Unit[];
@@ -199,6 +201,12 @@ export default function Profile({
                         .
                     </p>
                 )}
+                {!unitRequestsAvailable && (
+                    <p role="alert" className="text-sm text-amber-200">
+                        Pengajuan perubahan birdept sementara belum tersedia.
+                        Hubungi Admin.
+                    </p>
+                )}
                 <form
                     onSubmit={(event) => {
                         event.preventDefault();
@@ -258,7 +266,7 @@ export default function Profile({
                             />
                         </div>
                     </div>
-                    <Button disabled={unitForm.processing}>
+                    <Button disabled={unitForm.processing || !unitRequestsAvailable}>
                         Ajukan perubahan birdept
                     </Button>
                 </form>

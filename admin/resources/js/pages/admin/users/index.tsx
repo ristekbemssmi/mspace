@@ -1,4 +1,4 @@
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import {
     Download,
     Edit2,
@@ -81,6 +81,9 @@ const PRODI_OPTIONS = [
 ];
 
 export default function UsersIndex({ users, units, filters }: Props) {
+    const { flash } = usePage<{
+        flash?: { success?: string; warning?: string };
+    }>().props;
     const [search, setSearch] = useState(filters.search || '');
     const [prodiFilter, setProdiFilter] = useState(filters.studyProgram || '');
     const [bemFilter, setBemFilter] = useState(filters.is_bem || '');
@@ -217,6 +220,15 @@ export default function UsersIndex({ users, units, filters }: Props) {
                         </Button>
                     </div>
                 </div>
+
+                {(flash?.success || flash?.warning) && (
+                    <p
+                        role="status"
+                        className={`rounded-lg border p-3 text-sm ${flash.warning ? 'border-amber-400/50 bg-amber-400/10 text-amber-100' : 'border-emerald-400/50 bg-emerald-400/10 text-emerald-100'}`}
+                    >
+                        {flash.warning || flash.success}
+                    </p>
+                )}
 
                 {/* Filter & Search */}
                 <Card className="shadow-sm">
@@ -378,6 +390,23 @@ export default function UsersIndex({ users, units, filters }: Props) {
                                                     )}
                                                 </td>
                                                 <td className="space-x-2 px-4 py-3 text-right">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        type="button"
+                                                        title={`Kirim ulang tautan akses ke ${u.email}`}
+                                                        aria-label={`Kirim ulang tautan akses ke ${u.email}`}
+                                                        onClick={() =>
+                                                            router.post(
+                                                                `/admin/users/${u.id}/resend-access-links`,
+                                                            )
+                                                        }
+                                                    >
+                                                        <Mail className="h-4 w-4" />
+                                                        <span className="ml-1 hidden lg:inline">
+                                                            Kirim ulang
+                                                        </span>
+                                                    </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"

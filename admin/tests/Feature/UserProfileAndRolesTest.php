@@ -9,6 +9,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Schema;
 
 test('admin can change an existing role but cannot remove the last admin', function () {
     $admin = User::factory()->create(['adminRole' => 'admin']);
@@ -52,6 +53,7 @@ test('admin cannot change another users password or redirect their recovery emai
 
 test('admin creates an account with private random password and emails setup links', function () {
     Notification::fake();
+    config()->set('mail.default', 'smtp');
     $admin = User::factory()->create(['adminRole' => 'admin']);
 
     $this->actingAs($admin)->post(route('admin.users.store'), [
@@ -64,6 +66,60 @@ test('admin creates an account with private random password and emails setup lin
     expect(Hash::check('password', $created->password))->toBeFalse();
     Notification::assertSentTo($created, ResetPassword::class);
     Notification::assertSentTo($created, VerifyEmail::class);
+});
+
+test('admin can resend access links and sees when email delivery is disabled', function () {
+    Notification::fake();
+    $admin = User::factory()->create(['adminRole' => 'admin']);
+    $user = User::factory()->unverified()->create(['adminRole' => 'viewer']);
+
+    config()->set('mail.default', 'log');
+    $this->actingAs($admin)->post(route('admin.users.resend-access-links', $user->id))
+        ->assertRedirect()->assertSessionHas('warning');
+    Notification::assertNothingSent();
+
+    config()->set('mail.default', 'smtp');
+    $this->post(route('admin.users.resend-access-links', $user->id))
+        ->assertRedirect()->assertSessionHas('success');
+    Notification::assertSentTo($user, VerifyEmail::class);
+    Notification::assertSentTo($user, ResetPassword::class);
+
+    $viewer = User::factory()->create(['adminRole' => 'viewer']);
+    $this->actingAs($viewer)->post(route('admin.users.resend-access-links', $user->id))
+        ->assertForbidden();
+});
+
+test('creating an account reports when the mailer only writes to logs', function () {
+    Notification::fake();
+    config()->set('mail.default', 'log');
+    $admin = User::factory()->create(['adminRole' => 'admin']);
+
+    $this->actingAs($admin)->post(route('admin.users.store'), [
+        'username' => 'unmailed', 'name' => 'Belum Terkirim',
+        'email' => 'unmailed@example.com', 'adminRole' => 'viewer', 'is_bem' => false,
+    ])->assertRedirect()->assertSessionHasErrors('email');
+
+    expect(User::where('email', 'unmailed@example.com')->exists())->toBeTrue();
+    Notification::assertNothingSent();
+});
+
+test('account approvals and profile remain available before birdept migration runs', function () {
+    $admin = User::factory()->create(['adminRole' => 'admin']);
+    $newUser = User::factory()->unverified()->create(['adminRole' => null]);
+    Schema::dropIfExists('unitrequests');
+
+    $this->actingAs($admin)->get(route('admin.approvals'))->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('unitRequestsAvailable', false)
+            ->where('accounts.0.id', $newUser->id));
+    $this->post(route('admin.approvals.store', $newUser->id), ['role' => 'viewer'])
+        ->assertRedirect();
+    expect($newUser->fresh()->adminRole)->toBe('viewer');
+    $this->get(route('profile.edit'))->assertOk()
+        ->assertInertia(fn ($page) => $page->where('unitRequestsAvailable', false));
+    $this->post(route('profile.birdept-request'), [
+        'requestedUnitId' => 1, 'requestedPosition' => 'Staf',
+    ])->assertSessionHasErrors('requestedUnitId');
 });
 
 test('profile data is edited by its owner while birdept waits for admin approval', function () {

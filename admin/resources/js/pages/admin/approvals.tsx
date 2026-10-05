@@ -13,9 +13,11 @@ type UnitRequest = {
 export default function Approvals({
     accounts,
     unitRequests,
+    unitRequestsAvailable,
 }: {
     accounts: Account[];
     unitRequests: UnitRequest[];
+    unitRequestsAvailable: boolean;
 }) {
     const [roles, setRoles] = useState<Record<number, string>>({});
     const [busy, setBusy] = useState<string | null>(null);
@@ -112,7 +114,12 @@ export default function Approvals({
                     <h2 className="mb-3 text-xl font-bold text-[#f4e06d]">
                         Permintaan birdept ({unitRequests.length})
                     </h2>
-                    {unitRequests.length === 0 ? (
+                    {!unitRequestsAvailable ? (
+                        <p role="alert" className="text-sm text-amber-200">
+                            Persetujuan birdept belum tersedia. Jalankan migrasi
+                            database dashboard admin untuk mengaktifkannya.
+                        </p>
+                    ) : unitRequests.length === 0 ? (
                         <p className="text-sm text-muted-foreground">
                             Tidak ada perubahan birdept yang menunggu
                             persetujuan.

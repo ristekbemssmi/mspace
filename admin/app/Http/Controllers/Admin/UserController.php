@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -97,20 +98,21 @@ class UserController extends Controller
             ]);
         }
 
-        try {
-            $status = Password::sendResetLink(['email' => $user->email]);
-            if ($status === Password::RESET_LINK_SENT) {
-                $user->sendEmailVerificationNotification();
-            }
-        } catch (\Throwable $exception) {
-            report($exception);
+        $deliveryError = $this->sendAccessLinks($user);
 
-            return back()->withErrors(['email' => 'Akun dibuat, tetapi email pengaturan password gagal dikirim. Pengguna dapat meminta tautan dari halaman lupa password.']);
-        }
+        return $deliveryError
+            ? back()->withErrors(['email' => "Akun dibuat, tetapi {$deliveryError} Atur email server, lalu gunakan tombol kirim ulang pada daftar pengguna."])
+            : back()->with('success', 'Akun dibuat. Tautan pengaturan password dan verifikasi email dikirim ke pengguna.');
+    }
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with('success', 'Akun dibuat. Tautan pengaturan password dan verifikasi email dikirim ke pengguna.')
-            : back()->withErrors(['email' => 'Akun dibuat, tetapi tautan pengaturan password belum terkirim. Pengguna dapat meminta tautan dari halaman lupa password.']);
+    public function resendAccessLinks(int $id): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+        $deliveryError = $this->sendAccessLinks($user);
+
+        return $deliveryError
+            ? back()->with('warning', "Tautan untuk {$user->email} belum terkirim: {$deliveryError}")
+            : back()->with('success', "Tautan akses dikirim ke {$user->email}.");
     }
 
     public function update(Request $request, int $id): RedirectResponse
@@ -161,8 +163,9 @@ class UserController extends Controller
             UserBem::where('id', $user->id)->delete();
         }
 
-        if ($oldUnitId !== $user->fresh()->userBem?->unitId
-            || $oldPosition !== $user->fresh()->userBem?->position) {
+        $updatedMembership = $user->fresh()->userBem;
+        if (Schema::hasTable('unitrequests') && ($oldUnitId !== $updatedMembership?->unitId
+            || $oldPosition !== $updatedMembership?->position)) {
             UnitChangeRequest::where('userId', $user->id)->where('status', 'pending')->update([
                 'status' => 'rejected', 'reviewedBy' => $request->user()->id,
             ]);
@@ -222,5 +225,33 @@ class UserController extends Controller
         }, "export_{$table}_".date('Y-m-d_H-i-s').'.csv', [
             'Content-Type' => 'text/csv',
         ]);
+    }
+
+    private function sendAccessLinks(User $user): ?string
+    {
+        if (in_array(config('mail.default'), ['log', 'array'], true)) {
+            return 'pengiriman email belum aktif pada dashboard admin.';
+        }
+
+        $failed = [];
+        if (! $user->hasVerifiedEmail()) {
+            try {
+                $user->sendEmailVerificationNotification();
+            } catch (\Throwable $exception) {
+                report($exception);
+                $failed[] = 'verifikasi email gagal dikirim';
+            }
+        }
+
+        try {
+            if (Password::broker(config('fortify.passwords'))->sendResetLink(['email' => $user->email]) !== Password::RESET_LINK_SENT) {
+                $failed[] = 'tautan pengaturan password gagal dikirim';
+            }
+        } catch (\Throwable $exception) {
+            report($exception);
+            $failed[] = 'tautan pengaturan password gagal dikirim';
+        }
+
+        return $failed ? implode(' dan ', $failed).'.' : null;
     }
 }

@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 
 Route::get('/', fn () => redirect()->route(Auth::check() ? 'dashboard' : 'login'))->name('home');
@@ -30,11 +31,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    Route::get('/admin/approvals', fn () => Inertia::render('admin/approvals', [
-        'accounts' => User::whereNull('adminRole')->orderBy('createdAt')->get(['id', 'name', 'email', 'createdAt']),
-        'unitRequests' => UnitChangeRequest::with(['user:id,name,email', 'requestedUnit:unitId,name,abbreviation'])
-            ->where('status', 'pending')->orderBy('created_at')->get(),
-    ]))->middleware('can:create,'.User::class)->name('admin.approvals');
+    Route::get('/admin/approvals', function () {
+        $unitRequestsAvailable = Schema::hasTable('unitrequests');
+
+        return Inertia::render('admin/approvals', [
+            'accounts' => User::whereNull('adminRole')->orderBy('createdAt')->get(['id', 'name', 'email', 'createdAt']),
+            'unitRequestsAvailable' => $unitRequestsAvailable,
+            'unitRequests' => $unitRequestsAvailable
+                ? UnitChangeRequest::with(['user:id,name,email', 'requestedUnit:unitId,name,abbreviation'])
+                    ->where('status', 'pending')->orderBy('created_at')->get()
+                : [],
+        ]);
+    })->middleware('can:create,'.User::class)->name('admin.approvals');
     Route::post('/admin/approvals/{user}', function (Request $request, User $user) {
         $data = $request->validate(['role' => 'required|in:viewer,editor,admin']);
         abort_unless($user->adminRole === null, 409);
@@ -62,6 +70,8 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
         Route::get('/', [UserController::class, 'index'])->middleware('can:viewAny,'.User::class)->name('index');
         Route::post('/', [UserController::class, 'store'])->middleware('can:create,'.User::class)->name('store');
         Route::put('/{id}', [UserController::class, 'update'])->middleware('can:updateAny,'.User::class)->name('update');
+        Route::post('/{id}/resend-access-links', [UserController::class, 'resendAccessLinks'])
+            ->middleware(['can:updateAny,'.User::class, 'throttle:3,1'])->name('resend-access-links');
         Route::delete('/{id}', [UserController::class, 'destroy'])->middleware('can:deleteAny,'.User::class)->name('destroy');
         Route::post('/import-csv', [UserController::class, 'importCsv'])->middleware('can:import,'.User::class)->name('import-csv');
         Route::get('/template-csv', [UserController::class, 'downloadTemplate'])->middleware('can:viewAny,'.User::class)->name('template-csv');

@@ -54,7 +54,7 @@ test('editor creation follows category ownership and cannot impersonate another 
     ])->assertForbidden();
 });
 
-test('editor can update published content in their birdept without changing status or moving it', function () {
+test('editor can manage publication status only for allowed content in their birdept', function () {
     $unit = Birdept::create(['name' => 'Media Branding', 'abbreviation' => 'Medbrand', 'type' => 'biro']);
     $otherUnit = Birdept::create(['name' => 'Riset dan Teknologi', 'abbreviation' => 'Rizztek', 'type' => 'biro']);
     $author = User::factory()->create(['adminRole' => 'admin']);
@@ -72,7 +72,17 @@ test('editor can update published content in their birdept without changing stat
 
     $this->actingAs($editor)->put(route('admin.informasi.update', $info->id), $payload)->assertRedirect();
     expect($info->fresh()->title)->toBe('Kegiatan diperbarui');
-    $this->put(route('admin.informasi.update', $info->id), [...$payload, 'status' => 'archived'])->assertForbidden();
+    $this->put(route('admin.informasi.update', $info->id), [...$payload, 'status' => 'archived'])->assertRedirect();
+    expect($info->fresh()->status)->toBe('archived');
     $this->put(route('admin.informasi.update', $info->id), [...$payload, 'unitId' => $otherUnit->unitId])->assertForbidden();
     $this->put(route('admin.informasi.update', $info->id), [...$payload, 'category' => 'proker'])->assertForbidden();
+
+    $restricted = Informasi::create([
+        'unitId' => $unit->unitId, 'userId' => $author->id,
+        'title' => 'Lomba di birdept lain', 'description' => 'Isi',
+        'category' => 'lomba', 'status' => 'draft',
+    ]);
+    $this->put(route('admin.informasi.update', $restricted->id), [
+        ...$payload, 'category' => 'lomba',
+    ])->assertForbidden();
 });

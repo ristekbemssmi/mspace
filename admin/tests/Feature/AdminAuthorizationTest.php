@@ -22,7 +22,7 @@ test('viewer can read content but cannot modify or export it', function () {
     $this->actingAs($viewer)->get(route('admin.informasi.export-csv'))->assertForbidden();
 });
 
-test('editor can create a draft only under their own author identity', function () {
+test('editor can create and publish in their birdept under their own author identity', function () {
     $editor = User::factory()->create();
     $editor->forceFill(['adminRole' => 'editor'])->save();
     $other = User::factory()->create();
@@ -47,9 +47,10 @@ test('editor can create a draft only under their own author identity', function 
 
     $this->actingAs($editor)->post(route('admin.informasi.store'), [
         ...$payload,
-        'title' => 'Publikasi terlarang',
+        'title' => 'Publikasi birdept',
         'status' => 'published',
-    ])->assertForbidden();
+    ])->assertRedirect();
+    expect(Informasi::where('title', 'Publikasi birdept')->sole()->userId)->toBe($editor->id);
     $this->actingAs($editor)->get(route('admin.csv-hub.export', 'users'))->assertForbidden();
 });
 

@@ -28,7 +28,8 @@ class InformasiPolicy
         return $user->hasAdminRole('admin')
             || ($user->hasAdminRole('editor')
                 && InformationEditorAccess::unitId($user) !== null
-                && (int) $information->unitId === InformationEditorAccess::unitId($user));
+                && (int) $information->unitId === InformationEditorAccess::unitId($user)
+                && in_array($information->category, InformationEditorAccess::categories($user), true));
     }
 
     public function createForUnit(User $user, int $unitId, string $category): bool
@@ -45,11 +46,6 @@ class InformasiPolicy
     }
 
     public function delete(User $user, Informasi $information): bool
-    {
-        return $user->hasAdminRole('admin');
-    }
-
-    public function publish(User $user): bool
     {
         return $user->hasAdminRole('admin');
     }

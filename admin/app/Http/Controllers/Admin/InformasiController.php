@@ -205,9 +205,6 @@ class InformasiController extends Controller
             'images.*.uploaded' => 'Gambar gagal diunggah karena melebihi batas server. Pilih kembali melalui Tambahkan gambar agar dikompresi otomatis.',
         ]);
 
-        if ($validated['status'] !== 'draft') {
-            Gate::authorize('publish', Informasi::class);
-        }
         Gate::authorize('createForUnit', [Informasi::class, (int) $validated['unitId'], $validated['category']]);
 
         $timing = $this->publicationTiming($validated);
@@ -285,9 +282,6 @@ class InformasiController extends Controller
             'images.*.uploaded' => 'Gambar gagal diunggah karena melebihi batas server. Pilih kembali melalui Tambahkan gambar agar dikompresi otomatis.',
         ]);
 
-        if ($info->status !== $validated['status']) {
-            Gate::authorize('publish', Informasi::class);
-        }
         if ($request->user()->hasAdminRole('editor')) {
             abort_unless((int) $validated['unitId'] === (int) $info->unitId
                 && $validated['category'] === $info->category, 403);

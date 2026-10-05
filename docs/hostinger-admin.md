@@ -22,6 +22,17 @@ Jika memindahkan konfigurasi dashboard lama, gunakan `.env` dan `APP_KEY` lama s
 
 Database impor yang sudah digunakan dashboard lama tidak perlu dibuat ulang atau di-seed. Periksa `php artisan migrate:status` sebelum menjalankan migration. Jika migration lama muncul Pending pada database yang sudah berisi tabel, periksa riwayat impornya dahulu.
 
+### Pembaruan profil dan persetujuan birdept
+
+Halaman profil memerlukan tabel `unitrequests`. Setelah mengunggah kode admin terbaru, jalankan migrasi khusus ini dari `public_html/admin` menggunakan koneksi database admin yang benar:
+
+```bash
+php artisan migrate --path=database/migrations/2026_10_05_000001_create_unit_requests_table.php --force
+php artisan optimize:clear
+```
+
+Periksa `php artisan migrate:status` atau tabel `unitrequests` di phpMyAdmin. Jangan membuat tabelnya secara manual dan jangan menjalankan `migrate:fresh` pada database situs yang berisi data.
+
 ```bash
 php artisan optimize:clear
 php artisan config:cache
@@ -44,5 +55,5 @@ Jangan commit `.env`, database lokal, log, atau session. Folder admin ini tidak 
 - Gunakan `VITE_PUBLIC_URL=https://bemssmi.com` ketika build admin; variabel VITE dibaca saat build.
 - Konfigurasikan `MAIL_MAILER=smtp`, host, port, username, password, dan alamat pengirim sesuai penyedia email. `MAIL_MAILER=log` tidak mengirim email sungguhan.
 - Setelah deployment, jalankan `php artisan optimize:clear` lalu `php artisan config:cache` dari folder aplikasi admin.
-- Dari Pengaturan > Keamanan, tombol Ganti password via email mengirim tautan hanya ke email akun yang sedang masuk. Tautan dapat dibuka saat masih login dan hanya dapat digunakan sekali.
+- Dari Pengaturan > Profil, tombol Ganti password via email mengirim tautan hanya ke email akun yang sedang masuk. Tautan dapat dibuka saat masih login dan hanya dapat digunakan sekali.
 - Jika gagal, periksa pesan pada form serta `admin/storage/logs/laravel.log`. Jangan memublikasikan `.env` atau token reset.

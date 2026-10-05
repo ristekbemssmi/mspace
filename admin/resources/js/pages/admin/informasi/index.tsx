@@ -264,10 +264,7 @@ export default function InformasiIndex({
         title: '',
         description: '',
         source: '',
-        status: (canDeleteInformation ? 'published' : 'draft') as
-            | 'draft'
-            | 'published'
-            | 'archived',
+        status: 'published' as 'draft' | 'published' | 'archived',
         publishedAt: '',
         expiresAt: '',
         images: [] as File[],
@@ -409,7 +406,7 @@ export default function InformasiIndex({
         reset();
         setData('category', allowedCreateCategories[0] ?? 'kegiatan');
         setData('unitId', editorUnitId ?? units[0]?.unitId ?? 0);
-        setData('status', canDeleteInformation ? 'published' : 'draft');
+        setData('status', 'published');
         clearErrors();
         setImageError('');
         setEditingInfo(null);
@@ -1243,7 +1240,6 @@ export default function InformasiIndex({
                                     <select
                                         id="status"
                                         value={data.status}
-                                        disabled={!canDeleteInformation}
                                         onChange={(e) =>
                                             setData(
                                                 'status',

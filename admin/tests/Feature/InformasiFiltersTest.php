@@ -40,3 +40,25 @@ test('information list searches category and birdept and filters dates and visit
         'sortBy' => 'title', 'sortDirection' => 'asc',
     ]))->assertOk()->assertInertia(fn ($page) => $page->where('information.data.0.id', $second->id));
 });
+test('information pagination keeps filters and includes every matching record', function () {
+    $editor = User::factory()->create(['adminRole' => 'editor']);
+    $unit = Birdept::create(['name' => 'Riset dan Teknologi', 'abbreviation' => 'rizztek', 'type' => 'biro']);
+    for ($i = 1; $i <= 12; $i++) {
+        Informasi::create([
+            'unitId' => $unit->unitId, 'userId' => $editor->id,
+            'title' => sprintf('Agenda %02d', $i), 'description' => 'Agenda publik',
+            'category' => 'kegiatan', 'status' => 'published', 'publishedAt' => '2026-10-01 08:00:00',
+        ]);
+    }
+    $filters = ['search' => 'Agenda', 'category' => 'kegiatan', 'sortBy' => 'title', 'sortDirection' => 'asc'];
+    $this->actingAs($editor)->get(route('admin.informasi.index', $filters))
+        ->assertOk()->assertInertia(fn ($page) => $page->has('information.data', 10)
+        ->where('information.total', 12)->where('information.last_page', 2)
+        ->where('information.data.0.title', 'Agenda 01'));
+    $this->get(route('admin.informasi.index', [...$filters, 'page' => 2]))
+        ->assertOk()->assertInertia(fn ($page) => $page->has('information.data', 2)
+        ->where('information.current_page', 2)->where('information.data.0.title', 'Agenda 11')
+        ->where('filters.search', 'Agenda'));
+    $this->get(route('admin.informasi.index', ['dateTo' => '2026-10-02', 'visitsMax' => 0]))
+        ->assertOk()->assertInertia(fn ($page) => $page->where('information.total', 12));
+});

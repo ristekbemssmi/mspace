@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Birdept;
 use App\Models\Informasi;
-use App\Models\InformationImage;
 use App\Models\InformasiAlumni;
 use App\Models\InformasiBeasiswa;
 use App\Models\InformasiHimpunan;
@@ -14,20 +13,22 @@ use App\Models\InformasiLomba;
 use App\Models\InformasiMagang;
 use App\Models\InformasiProker;
 use App\Models\InformasiWisuda;
+use App\Models\InformationImage;
 use App\Models\User;
 use App\Services\CsvService;
 use App\Services\InformationImageService;
-use Illuminate\Support\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InformasiController extends Controller
 {
@@ -49,20 +50,20 @@ class InformasiController extends Controller
             ->select('information.*')
             ->selectRaw('COALESCE(visits.publicVisits, 0) AS publicVisits, COALESCE(visits.uniqueVisitors, 0) AS uniqueVisitors')
             ->with([
-            'birdept',
-            'units:unitId,name,abbreviation',
-            'user:id,name,username',
-            'beasiswa.syarat',
-            'beasiswa.benefit',
-            'kegiatan',
-            'himpunan',
-            'wisuda',
-            'alumni',
-            'magang',
-            'proker',
-            'lomba',
-            'images:id,informationId,originalName,sortOrder',
-        ]);
+                'birdept',
+                'units:unitId,name,abbreviation',
+                'user:id,name,username',
+                'beasiswa.syarat',
+                'beasiswa.benefit',
+                'kegiatan',
+                'himpunan',
+                'wisuda',
+                'alumni',
+                'magang',
+                'proker',
+                'lomba',
+                'images:id,informationId,originalName,sortOrder',
+            ]);
 
         $filters = $request->validate([
             'search' => 'nullable|string|max:255',
@@ -70,10 +71,10 @@ class InformasiController extends Controller
             'status' => 'nullable|in:draft,published,archived',
             'dateField' => 'nullable|in:publishedAt,expiresAt',
             'dateFrom' => 'nullable|date',
-            'dateTo' => 'nullable|date|after_or_equal:dateFrom',
+            'dateTo' => 'nullable|date'.($request->filled('dateFrom') ? '|after_or_equal:dateFrom' : ''),
             'visitMetric' => 'nullable|in:publicVisits,uniqueVisitors',
             'visitsMin' => 'nullable|integer|min:0',
-            'visitsMax' => 'nullable|integer|min:0|gte:visitsMin',
+            'visitsMax' => 'nullable|integer|min:0'.($request->filled('visitsMin') ? '|gte:visitsMin' : ''),
             'sortBy' => 'nullable|in:publicVisits,uniqueVisitors,publishedAt,expiresAt,createdAt,title,category',
             'sortDirection' => 'nullable|in:asc,desc',
         ]);
@@ -116,12 +117,20 @@ class InformasiController extends Controller
             });
         }
 
-        if (!empty($filters['category'])) $query->where('information.category', $filters['category']);
-        if (!empty($filters['status'])) $query->where('information.status', $filters['status']);
+        if (! empty($filters['category'])) {
+            $query->where('information.category', $filters['category']);
+        }
+        if (! empty($filters['status'])) {
+            $query->where('information.status', $filters['status']);
+        }
 
         $dateField = $filters['dateField'] ?? 'publishedAt';
-        if (!empty($filters['dateFrom'])) $query->whereDate("information.{$dateField}", '>=', $filters['dateFrom']);
-        if (!empty($filters['dateTo'])) $query->whereDate("information.{$dateField}", '<=', $filters['dateTo']);
+        if (! empty($filters['dateFrom'])) {
+            $query->whereDate("information.{$dateField}", '>=', $filters['dateFrom']);
+        }
+        if (! empty($filters['dateTo'])) {
+            $query->whereDate("information.{$dateField}", '<=', $filters['dateTo']);
+        }
 
         $visitMetric = $filters['visitMetric'] ?? 'publicVisits';
         if (isset($filters['visitsMin']) && $filters['visitsMin'] !== '') {
@@ -213,6 +222,7 @@ class InformasiController extends Controller
             }
 
             DB::commit();
+
             return redirect()->back()->with('success', 'Informasi berhasil dibuat.');
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -221,6 +231,7 @@ class InformasiController extends Controller
                 throw $e;
             }
             Log::error('Gagal menyimpan informasi', ['exception' => $e]);
+
             return redirect()->back()->withErrors(['error' => 'Gagal menyimpan informasi.']);
         }
     }
@@ -297,6 +308,7 @@ class InformasiController extends Controller
 
             DB::commit();
             Storage::disk('informationMedia')->delete($removedImages->pluck('storagePath')->all());
+
             return redirect()->back()->with('success', 'Informasi berhasil diperbarui.');
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -305,6 +317,7 @@ class InformasiController extends Controller
                 throw $e;
             }
             Log::error('Gagal memperbarui informasi', ['exception' => $e]);
+
             return redirect()->back()->withErrors(['error' => 'Gagal memperbarui informasi.']);
         }
     }
@@ -318,7 +331,7 @@ class InformasiController extends Controller
         return redirect()->back()->with('success', 'Informasi berhasil dihapus.');
     }
 
-    public function image(int $id): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function image(int $id): BinaryFileResponse
     {
         $image = InformationImage::with('information')->findOrFail($id);
         Gate::authorize('viewAny', Informasi::class);
@@ -334,10 +347,10 @@ class InformasiController extends Controller
 
     private function publicationTiming(array $data): array
     {
-        $publishedAt = !empty($data['publishedAt'])
+        $publishedAt = ! empty($data['publishedAt'])
             ? Carbon::parse($data['publishedAt'], config('app.timezone'))
             : ($data['status'] === 'published' ? now() : null);
-        $expiresAt = !empty($data['expiresAt'])
+        $expiresAt = ! empty($data['expiresAt'])
             ? Carbon::parse($data['expiresAt'], config('app.timezone'))->endOfDay()
             : null;
 
@@ -354,7 +367,7 @@ class InformasiController extends Controller
     {
         switch ($info->category) {
             case 'beasiswa':
-                if (!empty($data['beasiswa'])) {
+                if (! empty($data['beasiswa'])) {
                     $b = $data['beasiswa'];
                     InformasiBeasiswa::updateOrCreate(
                         ['id' => $info->id],
@@ -371,7 +384,7 @@ class InformasiController extends Controller
                 break;
 
             case 'kegiatan':
-                if (!empty($data['kegiatan'])) {
+                if (! empty($data['kegiatan'])) {
                     $k = $data['kegiatan'];
                     InformasiKegiatan::updateOrCreate(
                         ['id' => $info->id],
@@ -385,7 +398,7 @@ class InformasiController extends Controller
                 break;
 
             case 'himpunan':
-                if (!empty($data['himpunan'])) {
+                if (! empty($data['himpunan'])) {
                     $h = $data['himpunan'];
                     InformasiHimpunan::updateOrCreate(
                         ['id' => $info->id],
@@ -398,7 +411,7 @@ class InformasiController extends Controller
                 break;
 
             case 'wisuda':
-                if (!empty($data['wisuda'])) {
+                if (! empty($data['wisuda'])) {
                     $w = $data['wisuda'];
                     InformasiWisuda::updateOrCreate(
                         ['id' => $info->id],
@@ -411,7 +424,7 @@ class InformasiController extends Controller
                 break;
 
             case 'alumni':
-                if (!empty($data['alumni'])) {
+                if (! empty($data['alumni'])) {
                     $a = $data['alumni'];
                     InformasiAlumni::updateOrCreate(
                         ['id' => $info->id],
@@ -425,7 +438,7 @@ class InformasiController extends Controller
                 break;
 
             case 'magang':
-                if (!empty($data['magang'])) {
+                if (! empty($data['magang'])) {
                     $m = $data['magang'];
                     InformasiMagang::updateOrCreate(
                         ['id' => $info->id],
@@ -439,7 +452,7 @@ class InformasiController extends Controller
                 break;
 
             case 'proker':
-                if (!empty($data['proker'])) {
+                if (! empty($data['proker'])) {
                     $p = $data['proker'];
                     InformasiProker::updateOrCreate(
                         ['id' => $info->id],
@@ -494,7 +507,7 @@ class InformasiController extends Controller
         $table = $request->input('target_table', 'information');
         $result = $this->csvService->importCsv($table, $request->file('file'));
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return redirect()->back()->withErrors(['csv' => $result['message']]);
         }
 
@@ -520,7 +533,7 @@ class InformasiController extends Controller
 
         return response()->streamDownload(function () use ($csvContent) {
             echo $csvContent;
-        }, "export_{$table}_" . date('Y-m-d_H-i-s') . '.csv', [
+        }, "export_{$table}_".date('Y-m-d_H-i-s').'.csv', [
             'Content-Type' => 'text/csv',
         ]);
     }

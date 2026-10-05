@@ -9,6 +9,7 @@ test('a proker can be managed by a primary birdept and a collaborator', function
     $editor->forceFill(['adminRole' => 'editor'])->save();
     $primary = Birdept::create(['name' => 'Media Branding', 'abbreviation' => 'Medbrand', 'type' => 'biro']);
     $collaborator = Birdept::create(['name' => 'Riset dan Teknologi', 'abbreviation' => 'Rizztek', 'type' => 'biro']);
+    $editor->userBem()->create(['unitId' => $primary->unitId, 'position' => 'Staf']);
 
     $payload = [
         'unitId' => $primary->unitId,

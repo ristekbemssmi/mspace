@@ -1,9 +1,7 @@
 import { Form, Head } from '@inertiajs/react';
 import { ShieldCheck } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
 import Heading from '@/components/heading';
-import InputError from '@/components/input-error';
 import TwoFactorRecoveryCodes from '@/components/two-factor-recovery-codes';
 import TwoFactorSetupModal from '@/components/two-factor-setup-modal';
 import { Button } from '@/components/ui/button';
@@ -12,16 +10,12 @@ import { edit } from '@/routes/security';
 import { disable, enable } from '@/routes/two-factor';
 
 type Props = {
-    email: string;
-    status?: string;
     canManageTwoFactor?: boolean;
     requiresConfirmation?: boolean;
     twoFactorEnabled?: boolean;
 };
 
 export default function Security({
-    email,
-    status,
     canManageTwoFactor = false,
     requiresConfirmation = false,
     twoFactorEnabled = false,
@@ -51,23 +45,11 @@ export default function Security({
 
     return (
         <>
-            <Head title="Security settings" />
+            <Head title="Keamanan akun" />
 
-            <h1 className="sr-only">Security settings</h1>
+            <h1 className="sr-only">Keamanan akun</h1>
 
-            <div className="space-y-6">
-                <Heading variant="small" title="Ganti password"
-                    description={'Tautan ganti password dikirim ke email terdaftar: ' + email} />
-                <Form {...SecurityController.sendResetLink.form()} options={{ preserveScroll: true }} className="space-y-4">
-                    {({ errors, processing }) => <>
-                        <Button disabled={processing} data-test="send-password-reset-link-button">
-                            {processing ? 'Mengirim tautan...' : 'Ganti password via email'}
-                        </Button>
-                        <InputError message={errors.email} />
-                    </>}
-                </Form>
-                {status && <p role="status" className="text-sm text-emerald-200">{status}</p>}
-            </div>
+            {!canManageTwoFactor && <p className="text-sm text-muted-foreground">Autentikasi dua faktor belum tersedia untuk akun ini. Penggantian password tersedia di halaman Profil saya.</p>}
 
             {canManageTwoFactor && (
                 <div className="space-y-6">

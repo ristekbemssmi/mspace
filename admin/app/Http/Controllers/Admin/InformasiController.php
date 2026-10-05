@@ -14,9 +14,9 @@ use App\Models\InformasiMagang;
 use App\Models\InformasiProker;
 use App\Models\InformasiWisuda;
 use App\Models\InformationImage;
-use App\Models\User;
 use App\Services\CsvService;
 use App\Services\InformationImageService;
+use App\Support\InformationEditorAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -77,6 +77,7 @@ class InformasiController extends Controller
             'visitsMax' => 'nullable|integer|min:0'.($request->filled('visitsMin') ? '|gte:visitsMin' : ''),
             'sortBy' => 'nullable|in:publicVisits,uniqueVisitors,publishedAt,expiresAt,createdAt,title,category',
             'sortDirection' => 'nullable|in:asc,desc',
+            'priority' => 'nullable|integer|min:1',
         ]);
 
         if ($search = trim($filters['search'] ?? '')) {
@@ -120,6 +121,9 @@ class InformasiController extends Controller
         if (! empty($filters['category'])) {
             $query->where('information.category', $filters['category']);
         }
+        if (($filters['category'] ?? null) === 'proker' && ! empty($filters['priority'])) {
+            $query->whereHas('proker', fn ($proker) => $proker->where('priority', (int) $filters['priority']));
+        }
         if (! empty($filters['status'])) {
             $query->where('information.status', $filters['status']);
         }
@@ -148,17 +152,22 @@ class InformasiController extends Controller
         $query->orderByRaw("{$sortColumn} {$sortDirection}")->orderByDesc('information.id');
         $information = $query
             ->paginate(10)->withQueryString();
+        $information->getCollection()->each(function (Informasi $item): void {
+            $item->setAttribute('canEdit', Gate::allows('update', $item));
+        });
 
         $units = Birdept::select('unitId', 'name', 'abbreviation')->orderBy('name')->get();
-        $users = $request->user()->hasAdminRole('admin')
-            ? User::select('id', 'name', 'username')->orderBy('name')->get()
-            : User::select('id', 'name', 'username')->whereKey($request->user()->id)->get();
 
         return Inertia::render('admin/informasi/index', [
             'information' => $information,
             'units' => $units,
-            'users' => $users,
             'filters' => $filters,
+            'editorUnitId' => InformationEditorAccess::unitId($request->user()),
+            'isEditor' => $request->user()->hasAdminRole('editor'),
+            'allowedCreateCategories' => $request->user()->hasAdminRole('admin')
+                ? ['beasiswa', 'kegiatan', 'himpunan', 'wisuda', 'alumni', 'magang', 'proker', 'lomba']
+                : InformationEditorAccess::categories($request->user()),
+            'canDeleteInformation' => $request->user()->hasAdminRole('admin'),
         ]);
     }
 
@@ -199,6 +208,7 @@ class InformasiController extends Controller
         if ($validated['status'] !== 'draft') {
             Gate::authorize('publish', Informasi::class);
         }
+        Gate::authorize('createForUnit', [Informasi::class, (int) $validated['unitId'], $validated['category']]);
 
         $timing = $this->publicationTiming($validated);
         $storedPaths = [];
@@ -275,8 +285,12 @@ class InformasiController extends Controller
             'images.*.uploaded' => 'Gambar gagal diunggah karena melebihi batas server. Pilih kembali melalui Tambahkan gambar agar dikompresi otomatis.',
         ]);
 
-        if ($info->status !== 'draft' || $validated['status'] !== 'draft') {
+        if ($info->status !== $validated['status']) {
             Gate::authorize('publish', Informasi::class);
+        }
+        if ($request->user()->hasAdminRole('editor')) {
+            abort_unless((int) $validated['unitId'] === (int) $info->unitId
+                && $validated['category'] === $info->category, 403);
         }
 
         $timing = $this->publicationTiming($validated);

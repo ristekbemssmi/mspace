@@ -31,6 +31,7 @@ test('editor can create a draft only under their own author identity', function 
         'abbreviation' => 'medbrand',
         'type' => 'biro',
     ]);
+    $editor->userBem()->create(['unitId' => $birdept->unitId, 'position' => 'Staf']);
 
     $payload = [
         'unitId' => $birdept->unitId,
@@ -66,7 +67,7 @@ test('account export omits credentials and two factor secrets', function () {
     $this->actingAs($admin)->delete(route('admin.users.destroy', $admin->id))->assertForbidden();
 });
 
-test('editor cannot change another editor draft', function () {
+test('editor edits drafts in their birdept regardless of author', function () {
     $author = User::factory()->create();
     $author->forceFill(['adminRole' => 'editor'])->save();
     $other = User::factory()->create();
@@ -76,6 +77,9 @@ test('editor cannot change another editor draft', function () {
         'abbreviation' => 'medbrand',
         'type' => 'biro',
     ]);
+    $otherUnit = Birdept::create(['name' => 'Riset dan Teknologi', 'abbreviation' => 'Rizztek', 'type' => 'biro']);
+    $author->userBem()->create(['unitId' => $birdept->unitId, 'position' => 'Staf']);
+    $other->userBem()->create(['unitId' => $otherUnit->unitId, 'position' => 'Staf']);
     $info = Informasi::create([
         'unitId' => $birdept->unitId,
         'userId' => $author->id,
@@ -97,6 +101,13 @@ test('editor cannot change another editor draft', function () {
     $this->actingAs($other)->put(route('admin.informasi.update', $info->id), $payload)->assertForbidden();
     $this->actingAs($author)->put(route('admin.informasi.update', $info->id), $payload)->assertRedirect();
     expect($info->fresh()->title)->toBe('Draft diubah');
+
+    $colleague = User::factory()->create(['adminRole' => 'editor']);
+    $colleague->userBem()->create(['unitId' => $birdept->unitId, 'position' => 'Staf']);
+    $this->actingAs($colleague)->put(route('admin.informasi.update', $info->id), [
+        ...$payload, 'title' => 'Diubah rekan birdept',
+    ])->assertRedirect();
+    expect($info->fresh()->title)->toBe('Diubah rekan birdept');
 });
 test('viewer responses do not expose another account contact details', function () {
     $viewer = User::factory()->create();

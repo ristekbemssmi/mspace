@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
+use App\Http\Controllers\Settings\UnitChangeRequestController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -9,16 +10,16 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('settings/profile/birdept-request', [UnitChangeRequestController::class, 'store'])
+        ->middleware('throttle:6,1')->name('profile.birdept-request');
+    Route::post('settings/password/reset-link', [SecurityController::class, 'sendResetLink'])
+        ->middleware('throttle:6,1')->name('security.password.email');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('settings/security', [SecurityController::class, 'edit'])->name('security.edit');
-
-    Route::post('settings/password/reset-link', [SecurityController::class, 'sendResetLink'])
-        ->middleware('throttle:6,1')
-        ->name('security.password.email');
 
     Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
 });

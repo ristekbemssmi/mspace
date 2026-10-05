@@ -32,6 +32,7 @@ interface UserOption {
 
 interface InformasiItem {
     id: number;
+    canEdit: boolean;
     unitId: number;
     userId: number;
     title: string;
@@ -78,7 +79,10 @@ interface PaginatedInformasi {
 interface Props {
     information: PaginatedInformasi;
     units: BirdeptOption[];
-    users: UserOption[];
+    editorUnitId: number | null;
+    isEditor: boolean;
+    allowedCreateCategories: InformasiItem['category'][];
+    canDeleteInformation: boolean;
     filters: {
         search?: string;
         category?: string;
@@ -91,6 +95,7 @@ interface Props {
         visitsMax?: string;
         sortBy?: string;
         sortDirection?: string;
+        priority?: string;
     };
 }
 
@@ -178,8 +183,8 @@ async function prepareImage(file: File): Promise<File> {
             const context = canvas.getContext('2d');
 
             if (!context) {
-throw new Error('Browser tidak dapat memproses gambar.');
-}
+                throw new Error('Browser tidak dapat memproses gambar.');
+            }
 
             context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
 
@@ -189,8 +194,8 @@ throw new Error('Browser tidak dapat memproses gambar.');
                 );
 
                 if (blob?.type !== 'image/webp') {
-throw new Error('Browser tidak mendukung konversi WebP.');
-}
+                    throw new Error('Browser tidak mendukung konversi WebP.');
+                }
 
                 if (blob.size <= MAX_UPLOAD_IMAGE_BYTES) {
                     const name = file.name.replace(/\.[^.]+$/, '') + '.webp';
@@ -211,11 +216,17 @@ throw new Error('Browser tidak mendukung konversi WebP.');
 export default function InformasiIndex({
     information,
     units,
-    users,
     filters,
+    editorUnitId,
+    isEditor,
+    allowedCreateCategories,
+    canDeleteInformation,
 }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [jenisFilter, setJenisFilter] = useState(filters.category || '');
+    const [priorityFilter, setPriorityFilter] = useState(
+        filters.priority || '',
+    );
     const [statusFilter, setStatusFilter] = useState(filters.status || '');
     const [dateField, setDateField] = useState(
         filters.dateField || 'publishedAt',
@@ -248,18 +259,20 @@ export default function InformasiIndex({
         reset,
         clearErrors,
     } = useForm({
-        unitId: units.length > 0 ? units[0].unitId : 0,
+        unitId: editorUnitId ?? (units.length > 0 ? units[0].unitId : 0),
         unitIds: [] as number[],
-        userId: users.length > 0 ? users[0].id : 0,
         title: '',
         description: '',
         source: '',
-        status: 'published' as 'draft' | 'published' | 'archived',
+        status: (canDeleteInformation ? 'published' : 'draft') as
+            | 'draft'
+            | 'published'
+            | 'archived',
         publishedAt: '',
         expiresAt: '',
         images: [] as File[],
         removeImageIds: [] as number[],
-        category: 'beasiswa' as
+        category: (allowedCreateCategories[0] ?? 'kegiatan') as
             | 'beasiswa'
             | 'kegiatan'
             | 'himpunan'
@@ -307,8 +320,8 @@ export default function InformasiIndex({
 
     const addImages = async (files: File[]) => {
         if (files.length === 0) {
-return;
-}
+            return;
+        }
 
         const savedCount = (editingInfo?.images || []).filter(
             (image) => !data.removeImageIds.includes(image.id),
@@ -342,6 +355,7 @@ return;
     const currentFilters = (category = jenisFilter) => ({
         search,
         category,
+        priority: category === 'proker' ? priorityFilter : '',
         status: statusFilter,
         dateField,
         dateFrom,
@@ -370,6 +384,7 @@ return;
     const resetFilters = () => {
         setSearch('');
         setJenisFilter('');
+        setPriorityFilter('');
         setStatusFilter('');
         setDateField('publishedAt');
         setDateFrom('');
@@ -392,6 +407,9 @@ return;
 
     const openCreateModal = () => {
         reset();
+        setData('category', allowedCreateCategories[0] ?? 'kegiatan');
+        setData('unitId', editorUnitId ?? units[0]?.unitId ?? 0);
+        setData('status', canDeleteInformation ? 'published' : 'draft');
         clearErrors();
         setImageError('');
         setEditingInfo(null);
@@ -408,7 +426,6 @@ return;
                 item.category === 'proker'
                     ? (item.units || []).map((birdept) => birdept.unitId)
                     : [],
-            userId: item.userId,
             title: item.title,
             description: item.description,
             source: item.source || '',
@@ -460,8 +477,8 @@ return;
         e.preventDefault();
 
         if (imagePreparing) {
-return;
-}
+            return;
+        }
 
         transform((form) => (editingInfo ? { ...form, _method: 'put' } : form));
 
@@ -514,84 +531,101 @@ return;
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
-                        <CsvUploadModal
-                            title="Upload CSV Informasi"
-                            description="Pilih target tabel informasi atau tabel detail yang ingin diimpor sekaligus."
-                            uploadUrl="/admin/informasi/import-csv"
-                            templateUrl="/admin/informasi/template-csv"
-                            exportUrl="/admin/informasi/export-csv"
-                            tableOptions={[
-                                {
-                                    value: 'information',
-                                    label: 'Tabel Informasi Utama',
-                                },
-                                {
-                                    value: 'scholarships',
-                                    label: 'Sub-Tabel Detail Beasiswa',
-                                },
-                                {
-                                    value: 'scholarshipRequirements',
-                                    label: 'Sub-Tabel Syarat Beasiswa',
-                                },
-                                {
-                                    value: 'scholarshipBenefits',
-                                    label: 'Sub-Tabel Benefit Beasiswa',
-                                },
-                                {
-                                    value: 'activities',
-                                    label: 'Sub-Tabel Detail Kegiatan',
-                                },
-                                {
-                                    value: 'studentAssociations',
-                                    label: 'Sub-Tabel Detail Himpunan',
-                                },
-                                {
-                                    value: 'graduations',
-                                    label: 'Sub-Tabel Detail Wisuda',
-                                },
-                                {
-                                    value: 'alumni',
-                                    label: 'Sub-Tabel Detail Alumni',
-                                },
-                                {
-                                    value: 'internships',
-                                    label: 'Sub-Tabel Detail Magang',
-                                },
-                                {
-                                    value: 'workPrograms',
-                                    label: 'Sub-Tabel Detail Proker (Program Kerja)',
-                                },
-                                {
-                                    value: 'competitions',
-                                    label: 'Sub-Tabel Detail Lomba',
-                                },
-                                {
-                                    value: 'workProgramCommittees',
-                                    label: 'Sub-Tabel Panitia Program Kerja',
-                                },
-                            ]}
-                        />
+                        {canDeleteInformation && (
+                            <CsvUploadModal
+                                title="Upload CSV Informasi"
+                                description="Pilih target tabel informasi atau tabel detail yang ingin diimpor sekaligus."
+                                uploadUrl="/admin/informasi/import-csv"
+                                templateUrl="/admin/informasi/template-csv"
+                                exportUrl="/admin/informasi/export-csv"
+                                tableOptions={[
+                                    {
+                                        value: 'information',
+                                        label: 'Tabel Informasi Utama',
+                                    },
+                                    {
+                                        value: 'scholarships',
+                                        label: 'Sub-Tabel Detail Beasiswa',
+                                    },
+                                    {
+                                        value: 'scholarshipRequirements',
+                                        label: 'Sub-Tabel Syarat Beasiswa',
+                                    },
+                                    {
+                                        value: 'scholarshipBenefits',
+                                        label: 'Sub-Tabel Benefit Beasiswa',
+                                    },
+                                    {
+                                        value: 'activities',
+                                        label: 'Sub-Tabel Detail Kegiatan',
+                                    },
+                                    {
+                                        value: 'studentAssociations',
+                                        label: 'Sub-Tabel Detail Himpunan',
+                                    },
+                                    {
+                                        value: 'graduations',
+                                        label: 'Sub-Tabel Detail Wisuda',
+                                    },
+                                    {
+                                        value: 'alumni',
+                                        label: 'Sub-Tabel Detail Alumni',
+                                    },
+                                    {
+                                        value: 'internships',
+                                        label: 'Sub-Tabel Detail Magang',
+                                    },
+                                    {
+                                        value: 'workPrograms',
+                                        label: 'Sub-Tabel Detail Proker (Program Kerja)',
+                                    },
+                                    {
+                                        value: 'competitions',
+                                        label: 'Sub-Tabel Detail Lomba',
+                                    },
+                                    {
+                                        value: 'workProgramCommittees',
+                                        label: 'Sub-Tabel Panitia Program Kerja',
+                                    },
+                                ]}
+                            />
+                        )}
 
-                        <a href="/admin/informasi/export-csv" download>
+                        {canDeleteInformation && (
+                            <a href="/admin/informasi/export-csv" download>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="gap-1 text-xs"
+                                >
+                                    <Download className="h-3.5 w-3.5" />
+                                    Export CSV
+                                </Button>
+                            </a>
+                        )}
+
+                        {allowedCreateCategories.length > 0 && (
                             <Button
-                                variant="outline"
-                                size="sm"
-                                className="gap-1 text-xs"
+                                onClick={openCreateModal}
+                                className="gap-2 bg-amber-600 text-white hover:bg-amber-700"
                             >
-                                <Download className="h-3.5 w-3.5" />
-                                Export CSV
+                                <Plus className="h-4 w-4" />
+                                Tambah Informasi
                             </Button>
-                        </a>
-
-                        <Button
-                            onClick={openCreateModal}
-                            className="gap-2 bg-amber-600 text-white hover:bg-amber-700"
-                        >
-                            <Plus className="h-4 w-4" />
-                            Tambah Informasi
-                        </Button>
+                        )}
                     </div>
                 </div>
+
+                {isEditor && editorUnitId === null && (
+                    <p
+                        role="alert"
+                        className="rounded-xl border border-amber-400/50 bg-amber-400/10 p-4 text-sm text-white"
+                    >
+                        Akun editor belum terhubung ke birdept. Minta admin
+                        mengisi keanggotaan BEM dan birdept pada data pengguna
+                        agar Anda dapat menambah atau mengedit informasi.
+                    </p>
+                )}
 
                 {/* Jenis Informasi Tabs */}
                 <div className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -655,6 +689,22 @@ return;
                                 </select>
                             </div>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                {jenisFilter === 'proker' && (
+                                    <label className="grid min-w-0 gap-2 text-sm font-medium">
+                                        Prioritas Proker
+                                        <Input
+                                            type="number"
+                                            min="1"
+                                            value={priorityFilter}
+                                            onChange={(event) =>
+                                                setPriorityFilter(
+                                                    event.target.value,
+                                                )
+                                            }
+                                            placeholder="Semua prioritas"
+                                        />
+                                    </label>
+                                )}
                                 <label className="grid min-w-0 gap-2 text-sm font-medium">
                                     Tanggal berdasarkan
                                     <select
@@ -977,28 +1027,34 @@ return;
                                                     </span>
                                                 </td>
                                                 <td className="space-x-2 px-4 py-3 text-right">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() =>
-                                                            openEditModal(item)
-                                                        }
-                                                        className="h-8 w-8 p-0 text-[#9ec8ff] hover:bg-[#324879] hover:text-white"
-                                                    >
-                                                        <Edit2 className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                item.id,
-                                                            )
-                                                        }
-                                                        className="h-8 w-8 p-0 text-[#ffb4b4] hover:bg-[#654052] hover:text-white"
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
+                                                    {item.canEdit && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                openEditModal(
+                                                                    item,
+                                                                )
+                                                            }
+                                                            className="h-8 w-8 p-0 text-[#9ec8ff] hover:bg-[#324879] hover:text-white"
+                                                        >
+                                                            <Edit2 className="h-4 w-4" />
+                                                        </Button>
+                                                    )}
+                                                    {canDeleteInformation && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                handleDelete(
+                                                                    item.id,
+                                                                )
+                                                            }
+                                                            className="h-8 w-8 p-0 text-[#ffb4b4] hover:bg-[#654052] hover:text-white"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))
@@ -1137,7 +1193,7 @@ return;
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="space-y-1.5">
                                     <Label htmlFor="category">
                                         Jenis Informasi
@@ -1145,6 +1201,10 @@ return;
                                     <select
                                         id="category"
                                         value={data.category}
+                                        disabled={
+                                            !!editingInfo &&
+                                            !canDeleteInformation
+                                        }
                                         onChange={(e) =>
                                             setData(
                                                 'category',
@@ -1153,7 +1213,14 @@ return;
                                         }
                                         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-ring focus:outline-none"
                                     >
-                                        {JENIS_INFORMASI_LIST.map((opt) => (
+                                        {JENIS_INFORMASI_LIST.filter(
+                                            (opt) =>
+                                                allowedCreateCategories.includes(
+                                                    opt.value as InformasiItem['category'],
+                                                ) ||
+                                                editingInfo?.category ===
+                                                    opt.value,
+                                        ).map((opt) => (
                                             <option
                                                 key={opt.value}
                                                 value={opt.value}
@@ -1176,6 +1243,7 @@ return;
                                     <select
                                         id="status"
                                         value={data.status}
+                                        disabled={!canDeleteInformation}
                                         onChange={(e) =>
                                             setData(
                                                 'status',
@@ -1250,7 +1318,7 @@ return;
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-4">
                                 <div className="space-y-1.5">
                                     <Label htmlFor="unitId">
                                         {data.category === 'proker'
@@ -1260,6 +1328,7 @@ return;
                                     <select
                                         id="unitId"
                                         value={data.unitId}
+                                        disabled={!canDeleteInformation}
                                         onChange={(e) =>
                                             setData(
                                                 'unitId',
@@ -1268,44 +1337,24 @@ return;
                                         }
                                         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-ring focus:outline-none"
                                     >
-                                        {units.map((b) => (
-                                            <option
-                                                key={b.unitId}
-                                                value={b.unitId}
-                                            >
-                                                {b.abbreviation} ({b.name})
-                                            </option>
-                                        ))}
+                                        {units
+                                            .filter(
+                                                (b) =>
+                                                    canDeleteInformation ||
+                                                    b.unitId === editorUnitId,
+                                            )
+                                            .map((b) => (
+                                                <option
+                                                    key={b.unitId}
+                                                    value={b.unitId}
+                                                >
+                                                    {b.abbreviation} ({b.name})
+                                                </option>
+                                            ))}
                                     </select>
                                     {errors.unitId && (
                                         <p className="text-xs text-red-300">
                                             {errors.unitId}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <Label htmlFor="userId">User Pembuat</Label>
-                                    <select
-                                        id="userId"
-                                        value={data.userId}
-                                        onChange={(e) =>
-                                            setData(
-                                                'userId',
-                                                Number(e.target.value),
-                                            )
-                                        }
-                                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-ring focus:outline-none"
-                                    >
-                                        {users.map((u) => (
-                                            <option key={u.id} value={u.id}>
-                                                {u.name} (@{u.username})
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {errors.userId && (
-                                        <p className="text-xs text-red-300">
-                                            {errors.userId}
                                         </p>
                                     )}
                                 </div>

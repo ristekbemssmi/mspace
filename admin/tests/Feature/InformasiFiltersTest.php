@@ -62,3 +62,20 @@ test('information pagination keeps filters and includes every matching record', 
     $this->get(route('admin.informasi.index', ['dateTo' => '2026-10-02', 'visitsMax' => 0]))
         ->assertOk()->assertInertia(fn ($page) => $page->where('information.total', 12));
 });
+
+test('proker priority filter selects the exact priority', function () {
+    $admin = User::factory()->create(['adminRole' => 'admin']);
+    $unit = Birdept::create(['name' => 'Media Branding', 'abbreviation' => 'Medbrand', 'type' => 'biro']);
+    foreach ([1, 2] as $priority) {
+        $info = Informasi::create([
+            'unitId' => $unit->unitId, 'userId' => $admin->id,
+            'title' => "Proker {$priority}", 'description' => 'Isi proker',
+            'category' => 'proker', 'status' => 'draft',
+        ]);
+        $info->proker()->create(['priority' => $priority]);
+    }
+
+    $this->actingAs($admin)->get(route('admin.informasi.index', ['category' => 'proker', 'priority' => 2]))
+        ->assertOk()->assertInertia(fn ($page) => $page->where('information.total', 1)
+        ->where('information.data.0.title', 'Proker 2')->where('filters.priority', '2'));
+});

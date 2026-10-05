@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowRight, Building2, Eye, FileSpreadsheet, HelpCircle, Megaphone, Users } from 'lucide-react';
-import { VisitChart, type VisitSeries } from '@/components/visit-chart';
+import { VisitChart  } from '@/components/visit-chart';
+import type {VisitSeries} from '@/components/visit-chart';
 import type { Auth } from '@/types';
 
 type Stats = { total_birdept: number; total_users: number; total_users_bem: number; total_informasi: number; total_faqs: number; visitors: number; views: number; visitorsToday: number };

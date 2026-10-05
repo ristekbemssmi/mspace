@@ -19,8 +19,6 @@ class SecurityController extends Controller
     public function edit(TwoFactorAuthenticationRequest $request): Response
     {
         $props = [
-            'status' => $request->session()->get('status'),
-            'email' => $request->user()->email,
             'canManageTwoFactor' => Features::canManageTwoFactorAuthentication(),
         ];
 

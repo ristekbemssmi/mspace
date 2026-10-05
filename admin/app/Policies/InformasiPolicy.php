@@ -2,7 +2,9 @@
 
 namespace App\Policies;
 
+use App\Models\Informasi;
 use App\Models\User;
+use App\Support\InformationEditorAccess;
 
 class InformasiPolicy
 {
@@ -21,10 +23,20 @@ class InformasiPolicy
         return $user->hasAdminRole('admin', 'editor');
     }
 
-    public function update(User $user, \App\Models\Informasi $information): bool
+    public function update(User $user, Informasi $information): bool
     {
         return $user->hasAdminRole('admin')
-            || ($user->hasAdminRole('editor') && $information->status === 'draft' && (int) $information->userId === (int) $user->id);
+            || ($user->hasAdminRole('editor')
+                && InformationEditorAccess::unitId($user) !== null
+                && (int) $information->unitId === InformationEditorAccess::unitId($user));
+    }
+
+    public function createForUnit(User $user, int $unitId, string $category): bool
+    {
+        return $user->hasAdminRole('admin')
+            || ($user->hasAdminRole('editor')
+                && InformationEditorAccess::unitId($user) === $unitId
+                && in_array($category, InformationEditorAccess::categories($user), true));
     }
 
     public function deleteAny(User $user): bool
@@ -32,7 +44,7 @@ class InformasiPolicy
         return $user->hasAdminRole('admin');
     }
 
-    public function delete(User $user, \App\Models\Informasi $information): bool
+    public function delete(User $user, Informasi $information): bool
     {
         return $user->hasAdminRole('admin');
     }

@@ -5,15 +5,17 @@ use App\Http\Controllers\Admin\BirdeptController;
 use App\Http\Controllers\Admin\CsvImportController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\InformasiController;
+use App\Http\Controllers\Admin\UnitChangeApprovalController;
 use App\Http\Controllers\Admin\UserController;
 use App\Models\Birdept;
 use App\Models\Faq;
 use App\Models\Informasi;
+use App\Models\UnitChangeRequest;
 use App\Models\User;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', fn () => redirect()->route(Auth::check() ? 'dashboard' : 'login'))->name('home');
@@ -30,6 +32,8 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
 
     Route::get('/admin/approvals', fn () => Inertia::render('admin/approvals', [
         'accounts' => User::whereNull('adminRole')->orderBy('createdAt')->get(['id', 'name', 'email', 'createdAt']),
+        'unitRequests' => UnitChangeRequest::with(['user:id,name,email', 'requestedUnit:unitId,name,abbreviation'])
+            ->where('status', 'pending')->orderBy('created_at')->get(),
     ]))->middleware('can:create,'.User::class)->name('admin.approvals');
     Route::post('/admin/approvals/{user}', function (Request $request, User $user) {
         $data = $request->validate(['role' => 'required|in:viewer,editor,admin']);
@@ -39,6 +43,8 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
 
         return back()->with('success', 'Akses akun disetujui.');
     })->middleware('can:create,'.User::class)->name('admin.approvals.store');
+    Route::post('/admin/approvals/birdept/{unitRequest}', [UnitChangeApprovalController::class, 'update'])
+        ->middleware('can:create,'.User::class)->name('admin.approvals.birdept');
 
     // Modul Birdept
     Route::prefix('admin/birdept')->name('admin.birdept.')->group(function () {
@@ -95,4 +101,4 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
     });
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

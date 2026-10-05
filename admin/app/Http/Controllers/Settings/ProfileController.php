@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\Birdept;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,9 +20,23 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user()->load(['userBem.birdept', 'unitChangeRequest.requestedUnit']);
+
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'profile' => [
+                ...$user->only(['name', 'email', 'username', 'studentNumber', 'phone', 'studyProgram', 'email_verified_at']),
+                'birdept' => $user->userBem?->birdept?->only(['unitId', 'name', 'abbreviation']),
+                'position' => $user->userBem?->position,
+                'unitRequest' => $user->unitChangeRequest ? [
+                    'requestedUnitId' => $user->unitChangeRequest->requestedUnitId,
+                    'requestedPosition' => $user->unitChangeRequest->requestedPosition,
+                    'status' => $user->unitChangeRequest->status,
+                    'unitName' => $user->unitChangeRequest->requestedUnit?->name,
+                ] : null,
+            ],
+            'units' => Birdept::select('unitId', 'name', 'abbreviation')->orderBy('name')->get(),
         ]);
     }
 

@@ -8,6 +8,7 @@ test('admin can set, edit, and clear proker priority', function () {
     $editor = User::factory()->create();
     $editor->forceFill(['adminRole' => 'editor'])->save();
     $birdept = Birdept::create(['name' => 'Media Branding', 'abbreviation' => 'Medbrand', 'type' => 'biro']);
+    $editor->userBem()->create(['unitId' => $birdept->unitId, 'position' => 'Staf']);
 
     $payload = [
         'unitId' => $birdept->unitId,

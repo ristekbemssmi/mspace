@@ -7,7 +7,8 @@ use App\Models\User;
 test('editor can create and update a competition with its details', function () {
     $editor = User::factory()->create();
     $editor->forceFill(['adminRole' => 'editor'])->save();
-    $unit = Birdept::create(['name' => 'Riset dan Teknologi', 'abbreviation' => 'Rizztek', 'type' => 'biro']);
+    $unit = Birdept::create(['name' => 'Akademik dan Prestasi', 'abbreviation' => 'Akpres', 'type' => 'departemen']);
+    $editor->userBem()->create(['unitId' => $unit->unitId, 'position' => 'Staf']);
 
     $payload = [
         'unitId' => $unit->unitId,

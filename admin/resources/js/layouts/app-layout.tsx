@@ -22,7 +22,9 @@ export default function AppLayout({ children }: { breadcrumbs?: BreadcrumbItem[]
     const role = auth.user?.adminRole;
     const active = page.url.split('?')[0].replace(/\/$/, '') || '/';
 
-    if (nested) return <>{children}</>;
+    if (nested) {
+return <>{children}</>;
+}
 
     return (
         <LayoutContext.Provider value={true}><div className="admin-shell min-h-screen bg-[#19243a] text-white">
@@ -47,7 +49,11 @@ export default function AppLayout({ children }: { breadcrumbs?: BreadcrumbItem[]
                         </details>
                     </div>
                 </div>
-                {role && <nav aria-label="Navigasi utama" className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-5 pb-3 lg:px-8">{nav.filter(item => item.roles.includes(role)).map(item => { const selected = active === item.href || active.startsWith(`${item.href}/`); return <Link key={item.href} href={item.href} aria-current={selected ? 'page' : undefined} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${selected ? 'bg-[#f4e06d] text-[#19243a]' : 'text-white/85 hover:bg-white/10 hover:text-white'}`}>{item.label}</Link>; })}</nav>}
+                {role && <nav aria-label="Navigasi utama" className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-5 pb-3 lg:px-8">{nav.filter(item => item.roles.includes(role)).map(item => {
+ const selected = active === item.href || active.startsWith(`${item.href}/`);
+
+ return <Link key={item.href} href={item.href} aria-current={selected ? 'page' : undefined} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${selected ? 'bg-[#f4e06d] text-[#19243a]' : 'text-white/85 hover:bg-white/10 hover:text-white'}`}>{item.label}</Link>;
+})}</nav>}
             </header>
             <main className="mx-auto w-full max-w-7xl px-5 py-7 lg:px-8">{children}</main>
         </div></LayoutContext.Provider>

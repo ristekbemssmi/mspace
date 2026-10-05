@@ -39,7 +39,8 @@ interface UserItem {
     username: string;
     name: string;
     email: string;
-    studentNumber: string;
+    studentNumber?: string;
+    adminRole: 'viewer' | 'editor' | 'admin' | null;
     phone?: string;
     studyProgram?: string;
     user_bem?: {
@@ -92,7 +93,7 @@ export default function UsersIndex({ users, units, filters }: Props) {
             name: '',
             email: '',
             studentNumber: '',
-            password: '',
+            adminRole: 'viewer' as 'viewer' | 'editor' | 'admin',
             phone: '',
             studyProgram: PRODI_OPTIONS[0],
             is_bem: false,
@@ -120,8 +121,8 @@ export default function UsersIndex({ users, units, filters }: Props) {
             username: item.username,
             name: item.name,
             email: item.email,
-            studentNumber: item.studentNumber,
-            password: '',
+            studentNumber: item.studentNumber || '',
+            adminRole: item.adminRole ?? 'viewer',
             phone: item.phone || '',
             studyProgram: item.studyProgram || PRODI_OPTIONS[0],
             is_bem: !!item.user_bem,
@@ -321,6 +322,13 @@ export default function UsersIndex({ users, units, filters }: Props) {
                                                     <p className="text-xs text-muted-foreground">
                                                         @{u.username}
                                                     </p>
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="mt-1 text-xs capitalize"
+                                                    >
+                                                        {u.adminRole ??
+                                                            'Menunggu persetujuan'}
+                                                    </Badge>
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <p className="font-mono text-xs font-semibold">
@@ -461,6 +469,7 @@ export default function UsersIndex({ users, units, filters }: Props) {
                                         type="email"
                                         placeholder="budi@mail.com"
                                         value={data.email}
+                                        disabled={!!editingUser}
                                         onChange={(e) =>
                                             setData('email', e.target.value)
                                         }
@@ -495,35 +504,6 @@ export default function UsersIndex({ users, units, filters }: Props) {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <Label htmlFor="password">
-                                        Password{' '}
-                                        {editingUser && (
-                                            <span className="text-xs text-muted-foreground">
-                                                (Opsional)
-                                            </span>
-                                        )}
-                                    </Label>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        placeholder={
-                                            editingUser
-                                                ? 'Kosongkan jika tidak diubah'
-                                                : 'Minimal 6 karakter'
-                                        }
-                                        value={data.password}
-                                        onChange={(e) =>
-                                            setData('password', e.target.value)
-                                        }
-                                    />
-                                    {errors.password && (
-                                        <p className="text-xs text-red-300">
-                                            {errors.password}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-1.5">
                                     <Label htmlFor="phone">
                                         No Telepon / WA
                                     </Label>
@@ -541,6 +521,35 @@ export default function UsersIndex({ users, units, filters }: Props) {
                                         </p>
                                     )}
                                 </div>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="adminRole">
+                                    Akses dashboard
+                                </Label>
+                                <select
+                                    id="adminRole"
+                                    value={data.adminRole}
+                                    onChange={(event) =>
+                                        setData(
+                                            'adminRole',
+                                            event.target.value as
+                                                | 'viewer'
+                                                | 'editor'
+                                                | 'admin',
+                                        )
+                                    }
+                                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                >
+                                    <option value="viewer">Viewer</option>
+                                    <option value="editor">Editor</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                                {errors.adminRole && (
+                                    <p className="text-xs text-red-300">
+                                        {errors.adminRole}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="space-y-1.5">

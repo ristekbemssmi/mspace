@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
             'updatedAt' => now(),
         ]);
 
-        DB::table('organizationMembers')->insert([
+        DB::table('organizationmembers')->insert([
             'id' => $userId,
             'unitId' => 5,
             'position' => 'Staff',

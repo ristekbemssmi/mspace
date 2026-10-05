@@ -2,7 +2,7 @@
 
 ## Cakupan
 
-Database MySQL dipakai bersama oleh situs publik dan dashboard. Migrasi `2026_09_27_010000_standardize_domain_schema.php` mengganti nama tabel dan kolom domain tanpa menghapus baris. Migrasi `2026_09_27_010100_normalize_expiration_end_of_day.php` mengubah nilai kedaluwarsa lama yang tepat pukul 00.00 menjadi 23.59.59 pada hari yang sama. Kedua migrasi memiliki nama dan isi yang sama di kedua proyek, sehingga hanya dijalankan sekali pada database bersama.
+Database MySQL dipakai bersama oleh situs publik dan dashboard. Migrasi `2026_09_27_010000_standardize_domain_schema.php` mengganti nama tabel dan kolom domain tanpa menghapus baris. Migrasi `2026_09_27_010100_normalize_expiration_end_of_day.php` mengubah nilai kedaluwarsa lama yang tepat pukul 00.00 menjadi 23.59.59 pada hari yang sama. Kedua migrasi memiliki nama dan isi yang sama di kedua proyek, sehingga hanya dijalankan sekali pada database bersama. Migrasi `2026_10_06_000000_normalize_domain_table_case.php` menyamakan nama tabel fisik menjadi huruf kecil pada server MySQL yang membedakan kapitalisasi; tabel impor yang sudah huruf kecil tidak diubah.
 
 Migrasi historis tetap memuat nama lama agar instalasi baru dapat membangun skema awal sebelum migrasi penamaan. `LegacyErdBackfillService` hanya dipakai oleh migrasi historis. Kode aplikasi yang berjalan memakai nama baru.
 
@@ -34,7 +34,7 @@ Penghapusan informasi oleh admin memakai `deletedAt` (soft delete). Situs publik
 
 Tabel internal Laravel (`migrations`, `sessions`, `cache`, `cache_locks`, `jobs`, `job_batches`, `failed_jobs`, `password_reset_tokens`) tetap memakai kontrak framework. Kolom autentikasi `users.email_verified_at`, `users.remember_token`, dan `users.two_factor_*` juga tetap mengikuti Laravel/Fortify agar login, verifikasi email, dan autentikasi dua faktor tidak rusak.
 
-Server MySQL ini menggunakan `lower_case_table_names=1`. Karena itu nama tabel multi kata yang dideklarasikan camelCase oleh migrasi akan tampak huruf kecil di `information_schema`; pemanggilan dari Laravel tetap memakai ejaan camelCase. Kapitalisasi kolom tetap tersimpan sesuai deklarasi.
+Nama tabel fisik multi kata menggunakan huruf kecil, misalnya `informationimages`, `informationunits`, dan `sitevisits`. Referensi tabel di kode Laravel juga memakai huruf kecil agar impor database dari MySQL lokal tetap bekerja pada server Linux yang membedakan kapitalisasi. Nama kolom tetap memakai camelCase sesuai skema.
 
 ## Pemulihan dan pemeriksaan
 

@@ -51,7 +51,7 @@ class Informasi extends Model
 
     public function units()
     {
-        return $this->belongsToMany(Birdept::class, 'informationUnits', 'informationId', 'unitId', 'id', 'unitId');
+        return $this->belongsToMany(Birdept::class, 'informationunits', 'informationId', 'unitId', 'id', 'unitId');
     }
 
     public function proker()

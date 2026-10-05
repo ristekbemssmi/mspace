@@ -39,13 +39,13 @@ class InformasiSeeder extends Seeder
             'registrationUrl' => 'https://register.djarumbeasiswaplus.org',
         ]);
 
-        DB::table('scholarshipRequirements')->insert([
+        DB::table('scholarshiprequirements')->insert([
             ['scholarshipId' => $beasiswaId, 'requirement' => 'IPK', 'description' => 'Minimal 3.20 pada semester 4'],
             ['scholarshipId' => $beasiswaId, 'requirement' => 'Organisasi', 'description' => 'Aktif berorganisasi di dalam maupun luar kampus'],
             ['scholarshipId' => $beasiswaId, 'requirement' => 'Status', 'description' => 'Sedang menempuh pendidikan S1/D4'],
         ]);
 
-        DB::table('scholarshipBenefits')->insert([
+        DB::table('scholarshipbenefits')->insert([
             ['scholarshipId' => $beasiswaId, 'benefit' => 'Dana Beasiswa', 'description' => 'Rp 1.000.000 setiap bulan selama 1 tahun'],
             ['scholarshipId' => $beasiswaId, 'benefit' => 'Character Building', 'description' => 'Pelatihan pembentukan karakter'],
             ['scholarshipId' => $beasiswaId, 'benefit' => 'Leadership Development', 'description' => 'Pelatihan kepemimpinan'],
@@ -67,7 +67,7 @@ class InformasiSeeder extends Seeder
             'updatedAt' => now(),
         ]);
 
-        DB::table('workPrograms')->insert([
+        DB::table('workprograms')->insert([
             'id' => $prokerId1,
             'purpose' => 'Meningkatkan kepedulian sosial mahasiswa',
             'audience' => 'Masyarakat sekitar dan panti asuhan',
@@ -92,7 +92,7 @@ class InformasiSeeder extends Seeder
             'updatedAt' => now(),
         ]);
 
-        DB::table('workPrograms')->insert([
+        DB::table('workprograms')->insert([
             'id' => $prokerId2,
             'purpose' => 'Digitalisasi layanan BEM SSMI',
             'audience' => 'Seluruh Keluarga Mahasiswa SSMI',

@@ -8,7 +8,7 @@ class BenefitBeasiswa extends Model
 {
     public const CREATED_AT = 'createdAt';
     public const UPDATED_AT = 'updatedAt';
-    protected $table = 'scholarshipBenefits';
+    protected $table = 'scholarshipbenefits';
     protected $fillable = ['scholarshipId', 'benefit', 'description'];
 
     public function beasiswa()

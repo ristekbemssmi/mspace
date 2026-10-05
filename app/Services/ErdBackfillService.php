@@ -15,11 +15,11 @@ class ErdBackfillService
             $now = now();
 
             foreach (['Statistika dan Sains Data', 'Matematika', 'Aktuaria', 'Ilmu Komputer', 'Kecerdasan Buatan'] as $name) {
-                $counts['studyPrograms'] += DB::table('studyPrograms')->insertOrIgnore(['name' => $name, 'createdAt' => $now, 'updatedAt' => $now]);
+                $counts['studyPrograms'] += DB::table('studyprograms')->insertOrIgnore(['name' => $name, 'createdAt' => $now, 'updatedAt' => $now]);
             }
 
             foreach (DB::table('users')->whereNotNull('studyProgram')->get(['id', 'studyProgram']) as $user) {
-                $studyProgram = DB::table('studyPrograms')->where('name', $user->studyProgram)->first(['id']);
+                $studyProgram = DB::table('studyprograms')->where('name', $user->studyProgram)->first(['id']);
                 if ($studyProgram !== null) {
                     DB::table('users')->where('id', $user->id)->update(['studyProgramId' => $studyProgram->id]);
                 }
@@ -30,8 +30,8 @@ class ErdBackfillService
             }
 
             $peopleUsers = DB::table('users')
-                ->whereIn('id', DB::table('organizationMembers')->select('id'))
-                ->orWhereIn('id', DB::table('workProgramCommittees')->select('userId'))
+                ->whereIn('id', DB::table('organizationmembers')->select('id'))
+                ->orWhereIn('id', DB::table('workprogramcommittees')->select('userId'))
                 ->get(['id', 'name', 'personId']);
 
             foreach ($peopleUsers as $user) {
@@ -48,7 +48,7 @@ class ErdBackfillService
                 $counts['people']++;
             }
 
-            foreach (DB::table('organizationMembers')->join('users', 'users.id', '=', 'organizationMembers.id')->get(['users.personId', 'organizationMembers.unitId', 'organizationMembers.position']) as $member) {
+            foreach (DB::table('organizationmembers')->join('users', 'users.id', '=', 'organizationmembers.id')->get(['users.personId', 'organizationmembers.unitId', 'organizationmembers.position']) as $member) {
                 if ($member->personId === null) {
                     continue;
                 }
@@ -79,11 +79,11 @@ class ErdBackfillService
             }
 
             foreach (DB::table('information')->get(['id', 'title', 'description', 'source', 'status', 'category', 'unitId', 'publishedAt', 'expiresAt']) as $info) {
-                if (DB::table('contentRevisions')->where('informationId', $info->id)->where('version', 1)->exists()) {
+                if (DB::table('contentrevisions')->where('informationId', $info->id)->where('version', 1)->exists()) {
                     continue;
                 }
 
-                DB::table('contentRevisions')->insert([
+                DB::table('contentrevisions')->insert([
                     'informationId' => $info->id,
                     'version' => 1,
                     'changedBy' => null,
@@ -103,12 +103,12 @@ class ErdBackfillService
                 $counts['revisions']++;
             }
 
-            foreach (DB::table('workProgramCommittees')->join('users', 'users.id', '=', 'workProgramCommittees.userId')->get(['workProgramCommittees.workProgramId', 'workProgramCommittees.position', 'workProgramCommittees.division', 'users.personId']) as $participant) {
-                if ($participant->personId === null || DB::table('workProgramParticipants')->where('informationId', $participant->workProgramId)->where('personId', $participant->personId)->exists()) {
+            foreach (DB::table('workprogramcommittees')->join('users', 'users.id', '=', 'workprogramcommittees.userId')->get(['workprogramcommittees.workProgramId', 'workprogramcommittees.position', 'workprogramcommittees.division', 'users.personId']) as $participant) {
+                if ($participant->personId === null || DB::table('workprogramparticipants')->where('informationId', $participant->workProgramId)->where('personId', $participant->personId)->exists()) {
                     continue;
                 }
 
-                DB::table('workProgramParticipants')->insert([
+                DB::table('workprogramparticipants')->insert([
                     'informationId' => $participant->workProgramId,
                     'personId' => $participant->personId,
                     'position' => $participant->position,

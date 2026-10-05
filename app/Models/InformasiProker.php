@@ -8,7 +8,7 @@ class InformasiProker extends Model
 {
     public const CREATED_AT = 'createdAt';
     public const UPDATED_AT = 'updatedAt';
-    protected $table = 'workPrograms';
+    protected $table = 'workprograms';
     protected $primaryKey = 'id';
     public $incrementing = false;
     public $timestamps = false;

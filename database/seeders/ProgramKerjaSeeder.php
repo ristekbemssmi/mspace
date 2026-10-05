@@ -25,7 +25,7 @@ class ProgramKerjaSeeder extends Seeder
         // Clear existing data
         \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \App\Models\InformasiProker::truncate();
-        \DB::table('workProgramCommittees')->truncate();
+        \DB::table('workprogramcommittees')->truncate();
         \App\Models\Informasi::where('category', 'proker')->delete();
         \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
@@ -59,7 +59,7 @@ class ProgramKerjaSeeder extends Seeder
             ]);
 
             // Add sample committee
-            \DB::table('workProgramCommittees')->insert([
+            \DB::table('workprogramcommittees')->insert([
                 'workProgramId' => $information->id,
                 'userId' => $user->id,
                 'position' => 'Penanggung Jawab',

@@ -42,7 +42,7 @@ class TrackPublicVisit
             ? Birdept::query()->where('abbreviation', $route->parameter('slug'))->value('unitId')
             : null;
 
-        DB::table('siteVisits')->insert([
+        DB::table('sitevisits')->insert([
             'visitorId' => $visitorId,
             'routeName' => $routeName,
             'informationId' => $informationId,

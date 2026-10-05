@@ -51,7 +51,7 @@ export default function BemMisi() {
                     </div>
                     <p className="ml-10 sm:ml-14 md:ml-20 text-lg md:text-2xl text-[#F1F5FF] text-justify font-roboto">
                         Menjaga dan menguatkan citra positif BEM SSMI, serta menjadi pusat
-                        informasi inspirastif melalui komunikasi publik yang kreatif, masif, dan
+                        informasi inspiratif melalui komunikasi publik yang kreatif, masif, dan
                         mudah diakses oleh seluruh civitas SSMI.
                     </p>
                 </li>

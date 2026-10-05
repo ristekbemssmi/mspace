@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Modal from '@/Layouts/Modal';
+import Modal from '@/Layouts/modal';
 
 interface BirdeptProps {
   name: string;
@@ -34,10 +34,10 @@ const BemBirdeptCard = ({ name, role, imageSrc, onClick }: BirdeptProps) => {
 };
 
 interface BemBirdeptComponentProps {
-  birdepts?: any[];
+  units?: any[];
 }
 
-export default function BemBirdept({ birdepts = [] }: BemBirdeptComponentProps) {
+export default function BemBirdept({ units = [] }: BemBirdeptComponentProps) {
   const [selectedBirdept, setSelectedBirdept] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -64,17 +64,17 @@ export default function BemBirdept({ birdepts = [] }: BemBirdeptComponentProps) 
       </div>
       <div className="container mx-auto">
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:px-20 justify-items-center">
-          {Array.isArray(birdepts) && birdepts.length > 0 ? (
-            birdepts.map((member, index) => {
-              const roleName = member?.jenis === 'biro' ? 'Biro ' : 'Departemen ';
-              const roleDesc = member?.nama_birdept ? member.nama_birdept : roleName + (member?.nama_panggilan || '');
+          {Array.isArray(units) && units.length > 0 ? (
+            units.map((member, index) => {
+              const roleName = member?.type === 'biro' ? 'Biro ' : 'Departemen ';
+              const roleDesc = member?.name ? member.name : roleName + (member?.abbreviation || '');
 
               return (
                 <BemBirdeptCard
-                  key={member?.idbirdept || index}
-                  name={member?.nama_panggilan || 'Nama Tidak Tersedia'}
+                  key={member?.unitId || index}
+                  name={member?.abbreviation || 'Nama Tidak Tersedia'}
                   role={roleDesc}
-                  imageSrc={member?.idbirdept ? `/img/birdept-logo/${member.idbirdept}.svg` : ""}
+                  imageSrc={member?.unitId ? `/img/birdept-logo/${member.unitId}.svg` : ""}
                   onClick={() => handleCardClick(member)}
                 />
               );
@@ -83,7 +83,7 @@ export default function BemBirdept({ birdepts = [] }: BemBirdeptComponentProps) 
             <div className="col-span-2 lg:col-span-3 text-center text-white py-10 overflow-auto">
               <p className="paragraf">Belum ada data biro & departemen (atau format data salah).</p>
               <pre className="text-left text-xs bg-black/50 p-4 mt-4 rounded-lg">
-                {JSON.stringify(birdepts, null, 2)}
+                {JSON.stringify(units, null, 2)}
               </pre>
             </div>
           )}
@@ -93,15 +93,15 @@ export default function BemBirdept({ birdepts = [] }: BemBirdeptComponentProps) 
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={selectedBirdept?.nama_panggilan || 'Detail'}
+        title={selectedBirdept?.abbreviation || 'Detail'}
       >
         {selectedBirdept && (
           <div className="flex flex-col lg:flex-row items-center justify-center">
             <div className="bg-linear-to-b from-[#324879] to-[#1E2E50] rounded-xl flex w-full sm:w-2/3 lg:w-2/3 justify-center">
               <div className="bg-[url(/img/bg-modal.svg)]">
                 <img
-                  src={selectedBirdept?.idbirdept ? `/img/birdept-logo/${selectedBirdept.idbirdept}.svg` : "/api/placeholder/150/150"}
-                  alt={selectedBirdept?.nama_panggilan}
+                  src={selectedBirdept?.unitId ? `/img/birdept-logo/${selectedBirdept.unitId}.svg` : "/api/placeholder/150/150"}
+                  alt={selectedBirdept?.abbreviation}
                   width="400"
                   height="400"
                   className="w-full object-contain"
@@ -110,22 +110,22 @@ export default function BemBirdept({ birdepts = [] }: BemBirdeptComponentProps) 
             </div>
             <div className="w-full self-start px-8 pr-6">
               <h4 className="title-dark">
-                <span className="font-extrabold">{selectedBirdept?.jenis === 'bph' ? 'BPH' : selectedBirdept?.jenis.charAt(0).toUpperCase() + selectedBirdept?.jenis.slice(1)}</span>
+                <span className="font-extrabold">{selectedBirdept?.type === 'bph' ? 'BPH' : selectedBirdept?.type.charAt(0).toUpperCase() + selectedBirdept?.type.slice(1)}</span>
                 <br />
-                <span className="subtitle-dark">{selectedBirdept?.nama_birdept}</span>
+                <span className="subtitle-dark">{selectedBirdept?.name}</span>
               </h4>
-              {selectedBirdept?.deskripsi ? (
+              {selectedBirdept?.description ? (
                 <p className="text-justify text-base sm:text-lg md:text-lg whitespace-pre-wrap">
-                  {selectedBirdept.deskripsi}
+                  {selectedBirdept.description}
                 </p>
               ) : (
                 <p className="text-justify text-base sm:text-lg md:text-lg">
-                  Tidak ada deskripsi tersedia.
+                  Tidak ada description tersedia.
                 </p>
               )}
               <div className="mt-6">
                 <a
-                  href={`/birdept/${selectedBirdept.nama_panggilan?.toLowerCase()}#proker-section`}
+                  href={`/birdept/${selectedBirdept.abbreviation?.toLowerCase()}#proker-section`}
                   className="inline-block bg-[#1D2B44] hover:bg-[#2A3F63] text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-sm cursor-pointer"
                 >
                   Program Kerja

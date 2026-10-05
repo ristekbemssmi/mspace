@@ -30,6 +30,12 @@ return [
 
     'disks' => [
 
+        'informationMedia' => [
+            'driver' => 'local',
+            'root' => env('INFORMATION_MEDIA_ROOT', storage_path('app/information-media')),
+            'throw' => true,
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),

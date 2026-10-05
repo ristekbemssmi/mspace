@@ -1,6 +1,6 @@
-import React from 'react';
 import { Head } from '@inertiajs/react';
 import { Construction, ArrowLeft } from 'lucide-react';
+import React from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 
 interface UnderConstructionProps {

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-const FaqItem = ({ pertanyaan, jawaban }: { pertanyaan: string, jawaban: string }) => {
+const FaqItem = ({ question, answer }: { question: string, answer: string }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const contentId = `faq-content-${pertanyaan.replace(/\s+/g, '-').toLowerCase().replace(/[^a-z0-9-]/g, '')}`;
+    const contentId = `faq-content-${question.replace(/\s+/g, '-').toLowerCase().replace(/[^a-z0-9-]/g, '')}`;
 
     return (
         <div>
@@ -14,7 +14,7 @@ const FaqItem = ({ pertanyaan, jawaban }: { pertanyaan: string, jawaban: string 
                 aria-controls={contentId}
             >
                 <p className="text-left paragraf-dark">
-                    {pertanyaan}
+                    {question}
                 </p>
                 <span className="text-[#19243A] transition flex items-center justify-center">
                     <svg className={`h-6 w-6 transition-all duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -30,7 +30,7 @@ const FaqItem = ({ pertanyaan, jawaban }: { pertanyaan: string, jawaban: string 
                     <div className="px-5 md:px-10 bg-transparent rounded-lg w-full">
                         <div className="p-6 bg-white border-x-2 border-b-2 border-[#19243A] rounded-b-2xl">
                             <p className="text-justify whitespace-pre-wrap paragraf-dark">
-                                {jawaban}
+                                {answer}
                             </p>
                         </div>
                     </div>
@@ -42,7 +42,7 @@ const FaqItem = ({ pertanyaan, jawaban }: { pertanyaan: string, jawaban: string 
 
 export default function FaqPertanyaan({ faqs = [] }: { faqs?: any[] }) {
     return (
-        <section id="faq-pertanyaan" className="layout">
+        <section id="faq-question" className="layout">
             <div className="flex flex-col gap-10 bg-[#FCF8DC] rounded-4xl p-5 md:p-10">
                 <div className="text-center title-dark">
                     Pertanyaan yang <br />
@@ -54,12 +54,12 @@ export default function FaqPertanyaan({ faqs = [] }: { faqs?: any[] }) {
                         faqs.map((faq, index) => (
                             <FaqItem
                                 key={faq.id || index}
-                                pertanyaan={faq.pertanyaan}
-                                jawaban={faq.jawaban}
+                                question={faq.question}
+                                answer={faq.answer}
                             />
                         ))
                     ) : (
-                        <p className="text-center paragraf-dark">Belum ada pertanyaan terkait yang tersedia saat ini.</p>
+                        <p className="text-center paragraf-dark">Belum ada question terkait yang tersedia saat ini.</p>
                     )}
                 </div>
             </div>

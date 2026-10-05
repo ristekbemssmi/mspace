@@ -1,29 +1,35 @@
-import React, { useState } from 'react';
 import { ArrowUpRight, Target, Users, Calendar } from 'lucide-react';
-import Modal from '@/Layouts/Modal';
+import React, { useState } from 'react';
+import Modal from '@/Layouts/modal';
 
 interface ProkerItem {
     id: number;
-    judul?: string;
+    title?: string;
     name?: string;
-    deskripsi?: string;
+    description?: string;
     image_url: string;
     parent?: {
         id?: number;
-        judul?: string;
-        deskripsi?: string;
+        title?: string;
+        description?: string;
     };
     birdept?: {
-        idbirdept?: number;
-        nama_birdept?: string;
-        nama_panggilan?: string;
-        jenis?: string;
+        unitId?: number;
+        name?: string;
+        abbreviation?: string;
+        type?: string;
     };
+    units?: Array<{
+        unitId?: number;
+        name?: string;
+        abbreviation?: string;
+        type?: string;
+    }>;
     proker?: {
-        tujuan?: string;
-        sasaran?: string;
-        waktu_mulai?: string;
-        waktu_selesai?: string;
+        purpose?: string;
+        audience?: string;
+        startsOn?: string;
+        endsOn?: string;
     };
 }
 
@@ -31,33 +37,33 @@ interface CardProps {
     proker: ProkerItem;
     name: string;
     imageSrc: string;
-    deskripsi: string;
+    description: string;
     birdeptName: string;
     onCardClick: (proker: ProkerItem) => void;
 }
 
-const HomeProkerCard = ({ proker, name, imageSrc, deskripsi, birdeptName, onCardClick }: CardProps) => {
+const HomeProkerCard = ({ proker, name, imageSrc, description, birdeptName, onCardClick }: CardProps) => {
     return (
-        <div 
+        <div
             className="perspective-1000 group relative w-full aspect-square cursor-pointer select-none"
             onClick={() => onCardClick(proker)}
         >
             <div className="relative w-full h-full rounded-4xl transition-all duration-700 transform-style-preserve-3d group-hover:rotate-y-180 shadow-xl">
-                {/* FRONT FACE (Persis seperti pada gambar) */}
+                {/* FRONT FACE (Persis seperti pada imageUrl) */}
                 <div className="absolute inset-0 w-full h-full rounded-4xl overflow-hidden backface-hidden border-2 border-transparent group-hover:border-[#F4E06D]/30 transition-all duration-300">
-                    <img 
-                        src={imageSrc} 
+                    <img
+                        src={imageSrc}
                         alt={name}
                         width="400"
                         height="400"
                         loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="absolute inset-0 w-full h-full object-cover grayscale brightness-75 transition-transform duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-[#19243A]/60 mix-blend-multiply transition-colors duration-500"></div>
-                    <div className="absolute inset-0 bg-linear-to-t from-[#19243A]/90 via-[#19243A]/40 to-[#19243A]/40"></div>
-                    
+                    <div className="absolute inset-0 bg-[#6B7280]/20 mix-blend-multiply"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-[#19243A]/85 via-[#19243A]/30 to-[#19243A]/10"></div>
+
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                        <h3 className="bg-linear-to-b dark:from-white dark:to-[#F4E06D] from-[#324879] to-[#19243A] bg-clip-text text-transparent text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold font-helvetica drop-shadow-xl transition-transform duration-300 group-hover:-translate-y-1">
+                        <h3 className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold font-helvetica drop-shadow-xl transition-transform duration-300 group-hover:-translate-y-1">
                             {name}
                         </h3>
                         {birdeptName && (
@@ -80,7 +86,7 @@ const HomeProkerCard = ({ proker, name, imageSrc, deskripsi, birdeptName, onCard
                     </div>
 
                     <p className="text-white/85 text-xs sm:text-sm font-roboto leading-relaxed text-center line-clamp-4 md:line-clamp-5 px-1">
-                        {deskripsi || 'Program kerja inovatif dari BEM SSMI untuk memfasilitasi dan mengembangkan potensi seluruh mahasiswa.'}
+                        {description || 'Program kerja inovatif dari BEM SSMI untuk memfasilitasi dan mengembangkan potensi seluruh mahasiswa.'}
                     </p>
 
                     <div className="flex justify-center items-center pt-2">
@@ -116,12 +122,14 @@ export default function ProgramSection({ data = [] }: { data: any[] }) {
         setSelectedProker(null);
     };
 
-    const prokerName = selectedProker?.judul || selectedProker?.parent?.judul || selectedProker?.name || 'Program Kerja';
-    const prokerDesc = selectedProker?.deskripsi || selectedProker?.parent?.deskripsi || 'Tidak ada deskripsi tersedia.';
+    const prokerName = selectedProker?.title || selectedProker?.parent?.title || selectedProker?.name || 'Program Kerja';
+    const prokerDesc = selectedProker?.description || selectedProker?.parent?.description || 'Tidak ada description tersedia.';
     const birdept = selectedProker?.birdept;
-    const birdeptTitle = birdept?.nama_birdept 
-        ? `${birdept.jenis === 'biro' ? 'Biro' : (birdept.jenis === 'bph' ? 'BPH' : 'Departemen')} ${birdept.nama_birdept}`
-        : (birdept?.nama_panggilan || 'BEM SSMI');
+    const birdeptTitle = selectedProker?.units?.length
+        ? [birdept, ...selectedProker.units].map((unit) => unit?.name || unit?.abbreviation).filter(Boolean).join(' + ')
+        : birdept?.name
+        ? `${birdept.type === 'biro' ? 'Biro' : (birdept.type === 'bph' ? 'BPH' : 'Departemen')} ${birdept.name}`
+        : (birdept?.abbreviation || 'BEM SSMI');
 
     return (
         <section id="home-proker" className="w-full flex flex-col items-center justify-center layout">
@@ -130,13 +138,15 @@ export default function ProgramSection({ data = [] }: { data: any[] }) {
                     Program Kerja
                 </h2>
             </div>
-            
+
             <div className="w-full">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 lg:gap-12 justify-items-center">
                     {data.map((proker, index) => {
-                        const name = proker.judul || proker.parent?.judul || proker.name || 'Untitled';
-                        const desc = proker.deskripsi || proker.parent?.deskripsi || '';
-                        const bName = proker.birdept?.nama_panggilan || proker.birdept?.nama_birdept || '';
+                        const name = proker.title || proker.parent?.title || proker.name || 'Untitled';
+                        const desc = proker.description || proker.parent?.description || '';
+                        const bName = proker.units?.length
+                            ? [proker.birdept, ...proker.units].map((unit: { abbreviation?: string; name?: string }) => unit?.abbreviation || unit?.name).filter(Boolean).join(' + ')
+                            : proker.birdept?.abbreviation || proker.birdept?.name || '';
 
                         return (
                             <HomeProkerCard
@@ -144,7 +154,7 @@ export default function ProgramSection({ data = [] }: { data: any[] }) {
                                 proker={proker}
                                 name={name}
                                 imageSrc={proker.image_url}
-                                deskripsi={desc}
+                                description={desc}
                                 birdeptName={bName}
                                 onCardClick={handleCardClick}
                             />
@@ -182,7 +192,7 @@ export default function ProgramSection({ data = [] }: { data: any[] }) {
                         <div className="w-full lg:w-1/2 self-start px-2 md:px-6 flex flex-col">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="px-3 py-1 bg-[#19243A] text-[#F4E06D] text-[10px] md:text-xs font-bold rounded-full uppercase tracking-wider">
-                                    {birdept?.nama_panggilan ? (birdept.jenis === 'biro' ? `Biro ${birdept.nama_panggilan}` : `Departemen ${birdept.nama_panggilan}`) : 'BEM SSMI'}
+                                    {selectedProker.units?.length ? [birdept, ...selectedProker.units].map((unit) => unit?.abbreviation).filter(Boolean).join(' + ') : birdept?.abbreviation ? (birdept.type === 'biro' ? `Biro ${birdept.abbreviation}` : `Departemen ${birdept.abbreviation}`) : 'BEM SSMI'}
                                 </span>
                             </div>
 
@@ -190,7 +200,7 @@ export default function ProgramSection({ data = [] }: { data: any[] }) {
                                 {prokerName}
                             </h4>
 
-                            {birdept?.nama_birdept && (
+                            {birdept?.name && (
                                 <p className="text-xs md:text-sm font-semibold text-[#19243A]/70 mb-4">
                                     {birdeptTitle}
                                 </p>
@@ -201,36 +211,36 @@ export default function ProgramSection({ data = [] }: { data: any[] }) {
                             </div>
 
                             {/* Extra Proker attributes if available */}
-                            {(selectedProker.proker?.tujuan || selectedProker.proker?.sasaran || selectedProker.proker?.waktu_mulai) && (
+                            {(selectedProker.proker?.purpose || selectedProker.proker?.audience || selectedProker.proker?.startsOn) && (
                                 <div className="bg-white/60 border border-[#19243A]/15 rounded-xl p-3 mb-4 text-xs md:text-sm text-[#19243A] flex flex-col gap-1.5 shadow-xs">
-                                    {selectedProker.proker?.tujuan && (
+                                    {selectedProker.proker?.purpose && (
                                         <div className="flex items-start gap-2">
                                             <Target size={15} className="text-[#324879] shrink-0 mt-0.5" />
-                                            <p><span className="font-bold">Tujuan:</span> {selectedProker.proker.tujuan}</p>
+                                            <p><span className="font-bold">Tujuan:</span> {selectedProker.proker.purpose}</p>
                                         </div>
                                     )}
-                                    {selectedProker.proker?.sasaran && (
+                                    {selectedProker.proker?.audience && (
                                         <div className="flex items-start gap-2">
                                             <Users size={15} className="text-[#324879] shrink-0 mt-0.5" />
-                                            <p><span className="font-bold">Sasaran:</span> {selectedProker.proker.sasaran}</p>
+                                            <p><span className="font-bold">Sasaran:</span> {selectedProker.proker.audience}</p>
                                         </div>
                                     )}
-                                    {selectedProker.proker?.waktu_mulai && (
+                                    {selectedProker.proker?.startsOn && (
                                         <div className="flex items-start gap-2">
                                             <Calendar size={15} className="text-[#324879] shrink-0 mt-0.5" />
-                                            <p><span className="font-bold">Periode:</span> {selectedProker.proker.waktu_mulai} {selectedProker.proker.waktu_selesai ? `s/d ${selectedProker.proker.waktu_selesai}` : ''}</p>
+                                            <p><span className="font-bold">Periode:</span> {selectedProker.proker.startsOn} {selectedProker.proker.endsOn ? `s/d ${selectedProker.proker.endsOn}` : ''}</p>
                                         </div>
                                     )}
                                 </div>
                             )}
 
-                            {birdept?.nama_panggilan && (
+                            {birdept?.abbreviation && (
                                 <div className="mt-2">
                                     <a
-                                        href={`/birdept/${birdept.nama_panggilan.toLowerCase()}#proker-section`}
+                                        href={`/birdept/${birdept.abbreviation.toLowerCase()}#proker-section`}
                                         className="inline-flex items-center gap-2 bg-[#19243A] hover:bg-[#2A3F63] text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs md:text-sm cursor-pointer"
                                     >
-                                        <span>Buka Biro/Departemen {birdept.nama_panggilan}</span>
+                                        <span>Buka Biro/Departemen {birdept.abbreviation}</span>
                                         <ArrowUpRight size={15} className="text-[#F4E06D]" />
                                     </a>
                                 </div>

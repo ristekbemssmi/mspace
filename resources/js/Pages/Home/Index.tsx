@@ -1,15 +1,14 @@
 import { Head } from '@inertiajs/react';
 import { useEffect } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
-import HeroSection from './HeroSection';
-import SloganSection from './SloganSection';
 import AboutSection from './AboutSection';
+import FaqSection from './FaqSection';
+import HeroSection from './HeroSection';
 import InfoSection from './InfoSection';
 import ProgramSection from './ProgramSection';
-import BeasiswaSection from './BeasiswaSection';
-import FaqSection from './FaqSection';
+import SloganSection from './SloganSection';
 
-export default function Home({ news, scholarships, faqs, prokers }: { news: any[], scholarships: any[], faqs: any[], prokers: any[] }) {
+export default function Home({ news, faqs, prokers }: { news: any[], faqs: any[], prokers: any[] }) {
     useEffect(() => {
         const observerOptions = {
             threshold: 0.1,
@@ -57,11 +56,6 @@ export default function Home({ news, scholarships, faqs, prokers }: { news: any[
                 {/* Proker */}
                 <div className="reveal reveal-up">
                     <ProgramSection data={prokers} />
-                </div>
-
-                {/* Info Beasiswa */}
-                <div className="reveal reveal-up">
-                    <BeasiswaSection data={scholarships} />
                 </div>
 
                 {/* FAQ */}

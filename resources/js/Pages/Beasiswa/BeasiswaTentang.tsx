@@ -1,6 +1,6 @@
 export default function BeasiswaTentang() {
     return (
-        <section id="beasiswa-tentang" className="layout text-center">
+        <section id="beasiswa-tentang" className="layout mx-auto max-w-5xl text-center">
             <h2 className="title">
                 Informasi Beasiswa
             </h2>
@@ -9,7 +9,7 @@ export default function BeasiswaTentang() {
                 merealisasikan KM SSMI yang sejahtera serta menumbuhkan kolaborasi
                 berkelanjutan, demi terciptanya kemajuan KM SSMI yang menyeluruh.
             </p>
-            <a href="http://studentportal.ipb.ac.id" target="_blank" className="inline-block bg-[#FCF8DC] text-[#1D2B44] font-bold py-2 px-6 rounded-md hover:bg-white transition shadow-md mt-4 text-sm md:text-base">
+            <a href="https://studentportal.ipb.ac.id" target="_blank" rel="noopener noreferrer" className="mt-6 inline-block rounded-md bg-[#FCF8DC] px-7 py-3 font-bold text-[#19243A] shadow-md transition hover:bg-white focus-visible:outline-4 focus-visible:outline-[#F4E06D]">
                 Link Menuju Student Portal
             </a>
         </section>

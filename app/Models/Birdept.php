@@ -7,19 +7,21 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Birdept extends Model
 {
-    // Karena nama tabel bukan 'birdepts' (jika Anda pakai jamak) 
+    public const CREATED_AT = 'createdAt';
+    public const UPDATED_AT = 'updatedAt';
+    // Karena name tabel bukan 'units' (jika Anda pakai jamak)
     // atau jika Anda ingin memastikan konsistensi:
-    protected $table = 'birdepts';
+    protected $table = 'units';
 
     // Mendefinisikan Primary Key kustom
-    protected $primaryKey = 'idbirdept';
+    protected $primaryKey = 'unitId';
 
     // Kolom yang boleh diisi (Mass Assignment)
     protected $fillable = [
-        'nama_birdept',
-        'nama_panggilan',
-        'jenis',
-        'deskripsi',
+        'name',
+        'abbreviation',
+        'type',
+        'description',
         'instagram',
     ];
 
@@ -28,14 +30,14 @@ class Birdept extends Model
      */
     public function users(): HasMany
     {
-        return $this->hasMany(User::class, 'idbirdept', 'idbirdept');
+        return $this->hasMany(User::class, 'unitId', 'unitId');
     }
 
     /**
      * Relasi ke Informasi
      */
-    public function informasi(): HasMany
+    public function information(): HasMany
     {
-        return $this->hasMany(Informasi::class, 'idbirdept', 'idbirdept');
+        return $this->hasMany(Informasi::class, 'unitId', 'unitId');
     }
 }

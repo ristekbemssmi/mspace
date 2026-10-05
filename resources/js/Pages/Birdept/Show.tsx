@@ -4,24 +4,24 @@ import AppLayout from '@/Layouts/AppLayout';
 
 interface ProkerItem {
     id: number;
-    judul: string;
-    deskripsi: string;
+    title: string;
+    description: string;
 }
 
 interface BirdeptData {
-    idbirdept: string;
-    nama_birdept: string;
-    nama_panggilan: string;
-    jenis: string;
-    deskripsi: string;
+    unitId: string;
+    name: string;
+    abbreviation: string;
+    type: string;
+    description: string;
     instagram?: string;
-    informasi: ProkerItem[];
+    information: ProkerItem[];
     users?: any[];
 }
 
-const ProkerAccordionItem = ({ judul, deskripsi }: { judul: string, deskripsi: string }) => {
+const ProkerAccordionItem = ({ title, description }: { title: string, description: string }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const contentId = `proker-content-${judul.replace(/\s+/g, '-').toLowerCase().replace(/[^a-z0-9-]/g, '')}`;
+    const contentId = `proker-content-${title.replace(/\s+/g, '-').toLowerCase().replace(/[^a-z0-9-]/g, '')}`;
 
     return (
         <div className="w-full">
@@ -33,7 +33,7 @@ const ProkerAccordionItem = ({ judul, deskripsi }: { judul: string, deskripsi: s
                 aria-controls={contentId}
             >
                 <p className="text-left font-helvetica font-bold text-base md:text-xl text-[#19243A]">
-                    {judul}
+                    {title}
                 </p>
                 <span className="text-[#19243A] transition flex items-center justify-center shrink-0">
                     <svg className={`h-6 w-6 transition-all duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -49,7 +49,7 @@ const ProkerAccordionItem = ({ judul, deskripsi }: { judul: string, deskripsi: s
                     <div className="px-5 md:px-10 bg-transparent rounded-lg w-full">
                         <div className="p-6 bg-white border-x-2 border-b-2 border-[#19243A] rounded-b-2xl shadow-xl">
                             <p className="text-justify whitespace-pre-wrap font-roboto text-sm md:text-base leading-relaxed text-[#19243A]">
-                                {deskripsi}
+                                {description}
                             </p>
                         </div>
                     </div>
@@ -82,7 +82,7 @@ export default function Show({ birdept }: { birdept: BirdeptData }) {
 
     return (
         <>
-            <Head title={`${birdept.nama_birdept}`} />
+            <Head title={`${birdept.name}`} />
             
             <main className="page min-h-screen py-24 flex flex-col items-center">
                 {/* Header Slogan */}
@@ -112,7 +112,7 @@ export default function Show({ birdept }: { birdept: BirdeptData }) {
 
                         {/* Title of Biro/Departemen */}
                         <h2 className="text-center title-dark">
-                            {birdept.nama_birdept}
+                            {birdept.name}
                         </h2>
 
                         {/* Program Kerja Header */}
@@ -123,12 +123,12 @@ export default function Show({ birdept }: { birdept: BirdeptData }) {
 
                             {/* Accordion List */}
                             <div className="w-full flex flex-col gap-5">
-                                {Array.isArray(birdept.informasi) && birdept.informasi.length > 0 ? (
-                                    birdept.informasi.map((proker) => (
+                                {Array.isArray(birdept.information) && birdept.information.length > 0 ? (
+                                    birdept.information.map((proker) => (
                                         <ProkerAccordionItem
                                             key={proker.id}
-                                            judul={proker.judul}
-                                            deskripsi={proker.deskripsi}
+                                            title={proker.title}
+                                            description={proker.description}
                                         />
                                     ))
                                 ) : (
@@ -149,7 +149,7 @@ export default function Show({ birdept }: { birdept: BirdeptData }) {
                                 {birdept.users && birdept.users.map((user) => (
                                     <div key={user.id} className="bg-white/50 border border-gray-300 rounded-2xl p-4 text-center">
                                         <p className="font-bold text-[#19243A]">{user.name}</p>
-                                        <p className="text-sm text-gray-600">{user.jabatan}</p>
+                                        <p className="text-sm text-gray-600">{user.position}</p>
                                     </div>
                                 ))}
                             </div>

@@ -19,15 +19,15 @@ class UserSeeder extends Seeder
             'password' => bcrypt('zakwan'),
             'email' => 'muhammadzakwansakhiy@gmail.com',
             'name' => 'Zakwan',
-            'nim' => 'M0403241057',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'studentNumber' => 'M0403241057',
+            'createdAt' => now(),
+            'updatedAt' => now(),
         ]);
 
-        DB::table('users_bem')->insert([
+        DB::table('organizationMembers')->insert([
             'id' => $userId,
-            'idbirdept' => 5,
-            'jabatan' => 'Staff',
+            'unitId' => 5,
+            'position' => 'Staff',
         ]);
     }
 }

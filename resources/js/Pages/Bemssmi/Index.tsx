@@ -8,7 +8,7 @@ import BemMisi from './BemMisi';
 import BemTentang from './BemTentang';
 import BemVisi from './BemVisi';
 
-export default function Bemssmi({ birdepts = [] }: { birdepts?: any[] }) {
+export default function Bemssmi({ units = [] }: { units?: any[] }) {
     return (
         <>
             <Head title="BEM SSMI" />
@@ -29,7 +29,7 @@ export default function Bemssmi({ birdepts = [] }: { birdepts?: any[] }) {
                 <BemDetail />
 
                 {/* Bem Birdept */}
-                <BemBirdept birdepts={birdepts} />
+                <BemBirdept units={units} />
             </main>
         </>
     );

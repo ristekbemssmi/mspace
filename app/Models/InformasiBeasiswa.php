@@ -6,18 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class InformasiBeasiswa extends Model
 {
-    protected $table = 'informasi_beasiswa';
+    public static $snakeAttributes = false;
+
+    public const CREATED_AT = 'createdAt';
+    public const UPDATED_AT = 'updatedAt';
+    protected $table = 'scholarships';
     protected $primaryKey = 'id';
-    public $incrementing = false; // Because id is a foreign key to informasi table
+    public $incrementing = false; // Because id is a foreign key to information table
 
     protected $fillable = [
         'id',
-        'penyelenggara',
-        'tanggal_buka',
-        'tanggal_tutup',
-        'link_poster',
-        'link_instagram',
-        'link_pendaftaran'
+        'organizer',
+        'opensOn',
+        'closesOn',
+        'posterUrl',
+        'instagramUrl',
+        'registrationUrl'
     ];
 
     public function parent()
@@ -25,13 +29,13 @@ class InformasiBeasiswa extends Model
         return $this->belongsTo(Informasi::class, 'id');
     }
 
-    public function syaratBeasiswa()
+    public function scholarshipRequirements()
     {
-        return $this->hasMany(SyaratBeasiswa::class, 'id_beasiswa');
+        return $this->hasMany(SyaratBeasiswa::class, 'scholarshipId');
     }
 
-    public function benefitBeasiswa()
+    public function scholarshipBenefits()
     {
-        return $this->hasMany(BenefitBeasiswa::class, 'id_beasiswa');
+        return $this->hasMany(BenefitBeasiswa::class, 'scholarshipId');
     }
 }

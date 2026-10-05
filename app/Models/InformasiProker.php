@@ -6,17 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class InformasiProker extends Model
 {
-    protected $table = 'informasi_proker';
+    public const CREATED_AT = 'createdAt';
+    public const UPDATED_AT = 'updatedAt';
+    protected $table = 'workPrograms';
     protected $primaryKey = 'id';
     public $incrementing = false;
     public $timestamps = false;
 
     protected $fillable = [
         'id',
-        'tujuan',
-        'sasaran',
-        'waktu_mulai',
-        'waktu_selesai'
+        'purpose',
+        'audience',
+        'startsOn',
+        'endsOn',
+        'priority',
+    ];
+
+    protected $casts = [
+        'priority' => 'integer',
     ];
 
     public function parent()

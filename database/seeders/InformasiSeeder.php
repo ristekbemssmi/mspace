@@ -14,135 +14,137 @@ class InformasiSeeder extends Seeder
     public function run(): void
     {
         // 1. Beasiswa Djarum Plus
-        $beasiswaId = DB::table('informasi')->insertGetId([
-            'idbirdept' => 7, // Akpres
-            'iduser' => 1,
-            'judul' => 'Beasiswa Djarum Plus 2026',
-            'deskripsi' => 'Beasiswa Djarum Plus merupakan beasiswa prestasi yang memberikan pembekalan soft skills bagi mahasiswa berprestasi di Indonesia.',
-            'sumber' => 'djarumbeasiswa-plus.org',
+        $beasiswaId = DB::table('information')->insertGetId([
+            'unitId' => 7, // Akpres
+            'userId' => 1,
+            'title' => 'Beasiswa Djarum Plus 2026',
+            'description' => 'Beasiswa Djarum Plus merupakan beasiswa prestasi yang memberikan pembekalan soft skills bagi mahasiswa berprestasi di Indonesia.',
+            'source' => 'djarumbeasiswa-plus.org',
             'status' => 'published',
-            'jumlah_kunjungan' => 150,
-            'waktu_publikasi' => now(),
-            'jenis_informasi' => 'beasiswa',
-            'tanggal_kadaluarsa' => now()->addMonths(2),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'viewCount' => 150,
+            'publishedAt' => now(),
+            'category' => 'beasiswa',
+            'expiresAt' => now()->addMonths(2),
+            'createdAt' => now(),
+            'updatedAt' => now(),
         ]);
 
-        DB::table('informasi_beasiswa')->insert([
+        DB::table('scholarships')->insert([
             'id' => $beasiswaId,
-            'penyelenggara' => 'Djarum Foundation',
-            'tanggal_buka' => '2026-05-01',
-            'tanggal_tutup' => '2026-06-30',
-            'link_poster' => '/img/poster-djarum.jpg',
-            'link_instagram' => 'https://instagram.com/djarumbeasiswaplus',
-            'link_pendaftaran' => 'https://register.djarumbeasiswaplus.org',
+            'organizer' => 'Djarum Foundation',
+            'opensOn' => '2026-05-01',
+            'closesOn' => '2026-06-30',
+            'posterUrl' => '/img/poster-djarum.jpg',
+            'instagramUrl' => 'https://instagram.com/djarumbeasiswaplus',
+            'registrationUrl' => 'https://register.djarumbeasiswaplus.org',
         ]);
 
-        DB::table('syarat_beasiswa')->insert([
-            ['id_beasiswa' => $beasiswaId, 'nama_syarat' => 'IPK', 'keterangan' => 'Minimal 3.20 pada semester 4'],
-            ['id_beasiswa' => $beasiswaId, 'nama_syarat' => 'Organisasi', 'keterangan' => 'Aktif berorganisasi di dalam maupun luar kampus'],
-            ['id_beasiswa' => $beasiswaId, 'nama_syarat' => 'Status', 'keterangan' => 'Sedang menempuh pendidikan S1/D4'],
+        DB::table('scholarshipRequirements')->insert([
+            ['scholarshipId' => $beasiswaId, 'requirement' => 'IPK', 'description' => 'Minimal 3.20 pada semester 4'],
+            ['scholarshipId' => $beasiswaId, 'requirement' => 'Organisasi', 'description' => 'Aktif berorganisasi di dalam maupun luar kampus'],
+            ['scholarshipId' => $beasiswaId, 'requirement' => 'Status', 'description' => 'Sedang menempuh pendidikan S1/D4'],
         ]);
 
-        DB::table('benefit_beasiswa')->insert([
-            ['id_beasiswa' => $beasiswaId, 'nama_benefit' => 'Dana Beasiswa', 'keterangan' => 'Rp 1.000.000 setiap bulan selama 1 tahun'],
-            ['id_beasiswa' => $beasiswaId, 'nama_benefit' => 'Character Building', 'keterangan' => 'Pelatihan pembentukan karakter'],
-            ['id_beasiswa' => $beasiswaId, 'nama_benefit' => 'Leadership Development', 'keterangan' => 'Pelatihan kepemimpinan'],
+        DB::table('scholarshipBenefits')->insert([
+            ['scholarshipId' => $beasiswaId, 'benefit' => 'Dana Beasiswa', 'description' => 'Rp 1.000.000 setiap bulan selama 1 tahun'],
+            ['scholarshipId' => $beasiswaId, 'benefit' => 'Character Building', 'description' => 'Pelatihan pembentukan karakter'],
+            ['scholarshipId' => $beasiswaId, 'benefit' => 'Leadership Development', 'description' => 'Pelatihan kepemimpinan'],
         ]);
 
         // 2. Proker: M Care
-        $prokerId1 = DB::table('informasi')->insertGetId([
-            'idbirdept' => 12, // Sosling
-            'iduser' => 1,
-            'judul' => 'M Care: Bakti Sosial KM SSMI',
-            'deskripsi' => 'Program kerja yang berfokus pada aksi sosial dan kepedulian terhadap masyarakat sekitar kampus SSMI.',
-            'sumber' => 'Internal BEM SSMI',
+        $prokerId1 = DB::table('information')->insertGetId([
+            'unitId' => 12, // Sosling
+            'userId' => 1,
+            'title' => 'M Care: Bakti Sosial KM SSMI',
+            'description' => 'Program kerja yang berfokus pada aksi sosial dan kepedulian terhadap masyarakat sekitar kampus SSMI.',
+            'source' => 'Internal BEM SSMI',
             'status' => 'published',
-            'jumlah_kunjungan' => 85,
-            'waktu_publikasi' => now()->subDays(5),
-            'jenis_informasi' => 'proker',
-            'tanggal_kadaluarsa' => now()->addDays(15),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'viewCount' => 85,
+            'publishedAt' => now()->subDays(5),
+            'category' => 'proker',
+            'expiresAt' => now()->addDays(15),
+            'createdAt' => now(),
+            'updatedAt' => now(),
         ]);
 
-        DB::table('informasi_proker')->insert([
+        DB::table('workPrograms')->insert([
             'id' => $prokerId1,
-            'tujuan' => 'Meningkatkan kepedulian sosial mahasiswa',
-            'sasaran' => 'Masyarakat sekitar dan panti asuhan',
-            'waktu_mulai' => '2026-07-10',
-            'waktu_selesai' => '2026-07-12',
+            'purpose' => 'Meningkatkan kepedulian sosial mahasiswa',
+            'audience' => 'Masyarakat sekitar dan panti asuhan',
+            'startsOn' => '2026-07-10',
+            'endsOn' => '2026-07-12',
+            'priority' => 1,
         ]);
 
         // 3. Proker: MISSION 2.0
-        $prokerId2 = DB::table('informasi')->insertGetId([
-            'idbirdept' => 5, // Rizztek
-            'iduser' => 1,
-            'judul' => 'Dirgahayu SSMI 2026: Semangat Baru!',
-            'deskripsi' => 'Inovasi digital untuk mempermudah pelayanan mahasiswa SSMI melalui platform terintegrasi MISSION 2.0.',
-            'sumber' => 'Internal BEM SSMI',
+        $prokerId2 = DB::table('information')->insertGetId([
+            'unitId' => 5, // Rizztek
+            'userId' => 1,
+            'title' => 'Dirgahayu SSMI 2026: Semangat Baru!',
+            'description' => 'Inovasi digital untuk mempermudah pelayanan mahasiswa SSMI melalui platform terintegrasi MISSION 2.0.',
+            'source' => 'Internal BEM SSMI',
             'status' => 'published',
-            'jumlah_kunjungan' => 200,
-            'waktu_publikasi' => now()->subDays(19),
-            'jenis_informasi' => 'proker',
-            'tanggal_kadaluarsa' => now()->addMonths(1),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'viewCount' => 200,
+            'publishedAt' => now()->subDays(19),
+            'category' => 'proker',
+            'expiresAt' => now()->addMonths(1),
+            'createdAt' => now(),
+            'updatedAt' => now(),
         ]);
 
-        DB::table('informasi_proker')->insert([
+        DB::table('workPrograms')->insert([
             'id' => $prokerId2,
-            'tujuan' => 'Digitalisasi layanan BEM SSMI',
-            'sasaran' => 'Seluruh Keluarga Mahasiswa SSMI',
-            'waktu_mulai' => '2026-01-01',
-            'waktu_selesai' => '2026-12-31',
+            'purpose' => 'Digitalisasi layanan BEM SSMI',
+            'audience' => 'Seluruh Keluarga Mahasiswa SSMI',
+            'startsOn' => '2026-01-01',
+            'endsOn' => '2026-12-31',
+            'priority' => 2,
         ]);
 
         // 4. Kegiatan: Web Development Workshop
-        $kegiatanId = DB::table('informasi')->insertGetId([
-            'idbirdept' => 5, // Rizztek
-            'iduser' => 1,
-            'judul' => 'Workshop Web Development: React & Laravel',
-            'deskripsi' => 'Belajar membuat aplikasi web modern menggunakan React dan Laravel dari dasar hingga deploy.',
-            'sumber' => 'Biro Rizztek',
+        $kegiatanId = DB::table('information')->insertGetId([
+            'unitId' => 5, // Rizztek
+            'userId' => 1,
+            'title' => 'Workshop Web Development: React & Laravel',
+            'description' => 'Belajar membuat aplikasi web modern menggunakan React dan Laravel dari dasar hingga deploy.',
+            'source' => 'Biro Rizztek',
             'status' => 'published',
-            'jumlah_kunjungan' => 120,
-            'waktu_publikasi' => now()->subDays(2),
-            'jenis_informasi' => 'kegiatan',
-            'tanggal_kadaluarsa' => now()->addDays(3),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'viewCount' => 120,
+            'publishedAt' => now()->subDays(2),
+            'category' => 'kegiatan',
+            'expiresAt' => now()->addDays(3),
+            'createdAt' => now(),
+            'updatedAt' => now(),
         ]);
 
-        DB::table('informasi_kegiatan')->insert([
+        DB::table('activities')->insert([
             'id' => $kegiatanId,
-            'waktu_pelaksanaan' => '2026-06-15 09:00:00',
-            'lokasi' => 'Aula Gedung C, Kampus SSMI',
-            'penyelenggara' => 'Biro Riset dan Teknologi',
+            'eventAt' => '2026-06-15 09:00:00',
+            'location' => 'Aula Gedung C, Kampus SSMI',
+            'organizer' => 'Biro Riset dan Teknologi',
         ]);
 
         // 5. Magang: Magang Bakti BCA
-        $magangId = DB::table('informasi')->insertGetId([
-            'idbirdept' => 10, // PSDMK
-            'iduser' => 1,
-            'judul' => 'Magang Bakti BCA 2026',
-            'deskripsi' => 'Program magang untuk mahasiswa tingkat akhir yang ingin merasakan pengalaman bekerja di perbankan.',
-            'sumber' => 'karir.bca.co.id',
+        $magangId = DB::table('information')->insertGetId([
+            'unitId' => 10, // PSDMK
+            'userId' => 1,
+            'title' => 'Magang Bakti BCA 2026',
+            'description' => 'Program magang untuk mahasiswa tingkat akhir yang ingin merasakan pengalaman bekerja di perbankan.',
+            'source' => 'karir.bca.co.id',
             'status' => 'published',
-            'jumlah_kunjungan' => 310,
-            'waktu_publikasi' => now()->subDays(10),
-            'jenis_informasi' => 'magang',
-            'tanggal_kadaluarsa' => now()->addDays(20),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'viewCount' => 310,
+            'publishedAt' => now()->subDays(10),
+            'category' => 'magang',
+            'expiresAt' => now()->addDays(20),
+            'createdAt' => now(),
+            'updatedAt' => now(),
         ]);
 
-        DB::table('informasi_magang')->insert([
+        DB::table('internships')->insert([
             'id' => $magangId,
-            'perusahaan' => 'PT Bank Central Asia Tbk',
-            'posisi' => 'Customer Service / Teller',
-            'durasi' => '6 - 12 Bulan',
+            'company' => 'PT Bank Central Asia Tbk',
+            'position' => 'Customer Service / Teller',
+            'duration' => '6 - 12 Bulan',
         ]);
     }
 }

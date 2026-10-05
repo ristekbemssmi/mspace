@@ -1,13 +1,18 @@
-import React from 'react';
-import UnderConstruction from '@/Components/UnderConstruction';
+import InformationCategoryPage, { informationCategoryLayout, type CategoryItem } from '@/Components/InformationCategoryPage';
 
-export default function Wisuda() {
+export default function Wisuda({ items = [] }: { items?: CategoryItem[] }) {
     return (
-        <UnderConstruction 
-            pageTitle="Informasi Wisuda" 
-            description="Halaman Informasi Wisuda sedang dalam tahap pengembangan (Under Construction). Silakan kembali lagi nanti untuk mendapatkan pembaruan terbaru."
+        <InformationCategoryPage
+            title="Informasi Wisuda"
+            introduction="Lihat pengumuman periode wisuda, alur pendaftaran, dan pembaruan penting bagi calon wisudawan SSMI."
+            searchLabel="Cari informasi wisuda..."
+            items={items}
+            fields={[
+                { key: 'graduationPeriod', label: 'Periode wisuda' },
+                { key: 'registrationSteps', label: 'Alur pendaftaran' },
+            ]}
         />
     );
 }
 
-Wisuda.layout = UnderConstruction.layout;
+Wisuda.layout = informationCategoryLayout;

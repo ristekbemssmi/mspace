@@ -1,0 +1,1 @@
+function e(e){if(!e)return null;try{let t=new URL(e);return t.protocol===`https:`||t.protocol===`http:`?t.href:null}catch{return null}}function t(t){return t?/^\/?img\/[a-zA-Z0-9_./-]+$/.test(t)&&!t.includes(`..`)?`/${t.replace(/^\//,``)}`:e(t):null}export{t as n,e as t};

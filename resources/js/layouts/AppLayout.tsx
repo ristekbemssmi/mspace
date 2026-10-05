@@ -1,6 +1,6 @@
+import { Head } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { useState, useEffect } from 'react';
-import { Head } from '@inertiajs/react';
 import FooterLayout from '@/Layouts/Footer';
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -18,6 +18,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         };
 
         window.addEventListener('scroll', handleScroll);
+
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -48,18 +49,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                                 <a href="/bemssmi" className="hover:text-[#1f58d4] hover:scale-110 transition-all text-base sm:text-lg md:text-xl font-roboto tracking-[-0.6px] font-semibold">Tentang Kami</a>
                                 <div className="relative flex items-center">
                                     <button
-                                        id="informasi-dropdown"
+                                        id="information-dropdown"
                                         type="button"
                                         aria-haspopup="true"
                                         aria-expanded={isDropdownOpen}
-                                        aria-controls="informasi-menu"
+                                        aria-controls="information-menu"
                                         className="hover:text-[#1f58d4] hover:scale-110 transition-all peer flex items-center justify-center text-base sm:text-lg md:text-xl font-roboto tracking-[-0.6px] font-semibold bg-transparent border-none cursor-pointer"
                                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                     >
                                         <span>Informasi</span>
                                         <svg className={`ml-1 h-4 w-4 transition-all ${isDropdownOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </button>
-                                    <nav id="informasi-menu" className={`absolute origin-top top-full right-0 py-3 bg-linear-to-b from-[#FFFFFF] to-[#F4E06D] shadow-lg rounded-lg w-60 transition-all
+                                    <nav id="information-menu" className={`absolute origin-top top-full right-0 py-3 bg-linear-to-b from-[#FFFFFF] to-[#F4E06D] shadow-lg rounded-lg w-60 transition-all
                                         ${isDropdownOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}>
                                         <ul className="inline-block w-full text-center">
                                             <li><a href="/informasi-beasiswa" className="block px-4 py-2 hover:text-[#1f58d4] hover:scale-110 transition-all">Informasi Beasiswa</a></li>
@@ -106,12 +107,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                                         <a href="/bemssmi" className="text-[#19243A] block group-hover:text-[#1f58d4] group-hover:scale-110 transition">Tentang Kami</a>
                                     </li>
                                     <li className="garis" aria-hidden="true"></li>
-                                    <li id="informasi-dropdown-sm" className="group py-2 relative">
+                                    <li id="information-dropdown-sm" className="group py-2 relative">
                                         <button
                                             type="button"
                                             aria-haspopup="true"
                                             aria-expanded={isDropdownOpen}
-                                            aria-controls="informasi-menu-sm"
+                                            aria-controls="information-menu-sm"
                                             className="text-[#19243A] group-hover:text-[#1f58d4] group-hover:scale-110 transition flex items-center justify-center w-full bg-transparent border-none cursor-pointer"
                                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                         >
@@ -119,7 +120,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                                             <svg className={`h-4 w-4 transition-all ${isDropdownOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         </button>
                                         <nav
-                                            id="informasi-menu-sm"
+                                            id="information-menu-sm"
                                             className={`flex py-3 bg-transparent rounded-lg w-full right-4 top-full transition-all overflow-hidden
                                                 ${isDropdownOpen ? 'block' : 'hidden'}`}
                                         >

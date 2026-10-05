@@ -1,8 +1,8 @@
+import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Printer } from 'lucide-react';
 import React, { useState } from 'react';
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { Document, Page, pdfjs } from 'react-pdf';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Printer } from 'lucide-react';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',

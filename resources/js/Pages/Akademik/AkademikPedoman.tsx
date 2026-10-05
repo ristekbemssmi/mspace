@@ -12,10 +12,7 @@ export default function AkademikPedoman() {
                             Buku Panduan Akademik
                         </div>
                         <p className="text-justify paragraf-dark">Buku panduan akademik adalah dokumen resmi yang dikeluarkan oleh Institut Pertanian Bogor yang berisi informasi rinci yang membantu mahasiswa menjalani pendidikan secara sistematis dan sesuai prosedur.</p>
-                        <div className="flex gap-2">
-                            <a href="" className="text-lg md:text-xl block rounded-4xl border-2 border-black px-2 py-1 hover:bg-[#324879] hover:text-white transition-all">Unduh</a>
-                            <a href="" className="text-lg md:text-xl block rounded-4xl border-2 border-black px-2 py-1 hover:bg-[#324879] hover:text-white transition-all">Lihat</a>
-                        </div>
+                        <p className="text-sm text-gray-700">Dokumen belum tersedia.</p>
                     </div>
                 </div>
                 <div className="flex gap-6 items-center">
@@ -25,10 +22,7 @@ export default function AkademikPedoman() {
                             Buku Panduan MBKM
                         </div>
                         <p className="text-justify paragraf-dark">Buku ini merupakan Buku Panduan Merdeka Belajar Kampus Merdeka yang dipersiapkan pemerintah untuk mendukung implementasi Kurikulum Pendidikan Tinggi (KPT) di Perguruan Tinggi.</p>
-                        <div className="flex gap-2">
-                            <a href="" className="text-lg md:text-xl block rounded-4xl border-2 border-black px-2 py-1 hover:bg-[#324879] hover:text-white transition-all">Unduh</a>
-                            <a href="" className="text-lg md:text-xl block rounded-4xl border-2 border-black px-2 py-1 hover:bg-[#324879] hover:text-white transition-all">Lihat</a>
-                        </div>
+                        <p className="text-sm text-gray-700">Dokumen belum tersedia.</p>
                     </div>
                 </div>
             </div>

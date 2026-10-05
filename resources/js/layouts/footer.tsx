@@ -1,5 +1,5 @@
+import { Phone, Mail, MessageCircle } from 'lucide-react';
 import React from 'react';
-import { Phone, Mail, MessageCircle, Send } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -46,7 +46,7 @@ export default function Footer() {
                         <ul className="flex flex-col gap-2 text-white/70 font-helvetica text-xs md:text-xl">
                             <li><a href="/informasi-beasiswa" className="hover:text-[#F4E06D] transition-colors">Informasi Beasiswa</a></li>
                             <li><a href="/informasi-magang" className="hover:text-[#F4E06D] transition-colors">Informasi Magang</a></li>
-                            <li><a href="/proker" className="hover:text-[#F4E06D] transition-colors">Program Kerja</a></li>
+                            <li><a href="/bemssmi#ssmi-birdept" className="hover:text-[#F4E06D] transition-colors">Program Kerja</a></li>
                         </ul>
                     </div>
 

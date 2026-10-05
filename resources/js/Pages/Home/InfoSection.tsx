@@ -1,21 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { safePosterUrl } from '@/lib/safe-url';
 
 interface NewsItem {
     id: number;
-    judul: string;
-    deskripsi: string;
-    waktu_publikasi: string;
-    jenis_informasi: string;
-    tanggal_kadaluarsa: string;
-    image_url: string;
+    slug: string | null;
+    title: string;
+    description: string;
+    publishedAt: string;
+    category: string;
+    expiresAt: string | null;
+    imageUrl: string | null;
 }
 
 export default function InfoSection({ data = [] }: { data: NewsItem[] }) {
-    const newsData = useMemo(() => {
-        return [...data]
-            .sort((a, b) => new Date(a.tanggal_kadaluarsa).getTime() - new Date(b.tanggal_kadaluarsa).getTime());
-    }, [data]);
+    const newsData = useMemo(() => data.slice(0, 9), [data]);
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -28,11 +28,13 @@ export default function InfoSection({ data = [] }: { data: NewsItem[] }) {
     };
 
     const renderCard = (item: NewsItem, index: number) => {
+        const imageUrl = item.imageUrl?.startsWith('/media/information/') ? item.imageUrl : safePosterUrl(item.imageUrl);
         const isActive = index === currentIndex;
         const isPrev = index === (currentIndex === 0 ? newsData.length - 1 : currentIndex - 1);
         const isNext = index === (currentIndex === newsData.length - 1 ? 0 : currentIndex + 1);
 
         let cardStyle = "opacity-0 scale-75 blur-md pointer-events-none absolute";
+
         if (isActive) {
             cardStyle = "opacity-100 scale-100 blur-none z-20 relative";
         } else if (isPrev) {
@@ -45,48 +47,52 @@ export default function InfoSection({ data = [] }: { data: NewsItem[] }) {
             <div
                 key={item.id}
                 onClick={() => {
-                    if (isPrev) prevSlide();
-                    if (isNext) nextSlide();
+                    if (isPrev) {
+prevSlide();
+}
+
+                    if (isNext) {
+nextSlide();
+}
                 }}
-                className={`flex flex-col md:flex-row gap-6 md:gap-8 items-center bg-white/10 backdrop-blur-2xl border border-white/20 rounded-[32px] md:rounded-[40px] p-5 md:p-8 transition-all duration-700 ease-in-out shadow-2xl h-[520px] md:h-[480px] w-full max-w-5xl ${cardStyle}`}
+                className={`flex flex-col md:flex-row gap-6 md:gap-8 items-center bg-white/10 backdrop-blur-2xl border border-white/20 rounded-[32px] md:rounded-[40px] p-5 md:p-8 transition-all duration-700 ease-in-out shadow-2xl min-h-[520px] md:min-h-[480px] w-full max-w-5xl ${cardStyle}`}
             >
-                <div className="w-full md:w-[45%] order-1 md:order-2 h-44 md:h-full flex items-center justify-center shrink-0">
-                    <div className="relative w-full h-full max-h-40 md:max-h-full aspect-video md:aspect-4/3 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/10">
-                        <img
-                            src={item.image_url}
-                            alt={item.judul}
+                <div className="w-full md:w-[45%] order-1 md:order-2 h-48 sm:h-64 md:h-[414px] flex items-center justify-center shrink-0">
+                    <div className="relative w-full h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-white/90">
+                        {imageUrl ? <img
+                            src={imageUrl}
+                            alt={`Dokumentasi ${item.title}`}
                             width="600"
                             height="400"
                             loading="lazy"
-                            className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-linear-to-t from-[#253D6D]/40 to-transparent"></div>
+                            className="w-full h-full object-contain"
+                        /> : <div className="flex h-full w-full items-center justify-center bg-[#253D6D] px-5 text-center text-sm font-semibold text-[#F4E06D]">Dokumentasi belum tersedia</div>}
                     </div>
                 </div>
 
                 <div className={`flex-1 order-2 md:order-1 text-left h-full flex flex-col justify-center transition-opacity duration-500 overflow-hidden ${isActive ? 'opacity-100' : 'opacity-0'}`}>
                     <div className="flex items-center gap-2 mb-2">
                         <span className="px-3 py-1 bg-[#F4E06D]/20 text-[#F4E06D] text-[10px] font-bold rounded-full border border-[#F4E06D]/30 uppercase tracking-widest">
-                            {item.jenis_informasi}
+                            {item.category}
                         </span>
                         <p className="text-white/60 text-xs md:text-sm">
-                            {new Date(item.waktu_publikasi).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            {new Date(item.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </p>
                     </div>
                     <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight mb-2 md:mb-3 line-clamp-2 md:line-clamp-none uppercase font-helvetica">
-                        {item.judul}
+                        {item.title}
                     </h3>
                     <p className="text-white/80 text-sm md:text-base leading-relaxed mb-6 md:mb-10 line-clamp-3 md:line-clamp-4">
-                        {item.deskripsi}
+                        {item.description}
                     </p>
 
                     {isActive && (
-                        <button type="button" className="group self-start flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-5 md:px-6 py-2.5 md:py-3 rounded-xl border border-white/10 transition-all duration-300 mt-auto">
+                        <Link href={`/informasi/${item.slug || item.id}`} className="group self-start flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-5 md:px-6 py-2.5 md:py-3 rounded-xl border border-white/10 transition-all duration-300 mt-auto">
                             <span className="text-xs md:text-sm font-semibold">Selengkapnya</span>
                             <div className="bg-[#F4E06D]/20 rounded-lg p-1 group-hover:bg-[#F4E06D]/40 transition-colors">
                                 <ArrowUpRight size={16} className="text-[#F4E06D]" />
                             </div>
-                        </button>
+                        </Link>
                     )}
                 </div>
             </div>

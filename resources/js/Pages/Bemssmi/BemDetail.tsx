@@ -16,7 +16,7 @@ export default function BemDetail() {
                     <div className="ml-0 mt-5 sm:mt-0 sm:ml-14 md:ml-20">
                         <p className="paragraf font-bold mb-4">AKAR POHON</p>
                         <p className="text-justify paragraf">
-                            Ekor merpati yang menyerupai akar pohon dalam logo ini merepresentasikan fondasi yang kuat dan sumber kehidupan. Ia menunjukkan bahwa setiap langkah atau pertumbuhan harus berawal dari pijakan yang kokoh, sehingga mampu menopang cabang dan daun di atasnya. Akar juga melambangkan keterhubungan dengan tanah, tradisi, dan nilai-nilai dasar yang memberi nutrisi bagi perkembangan.
+                            Ekor merpati yang menyerupai akar pohon dalam logo ini merepresentasikan fondasi yang kuat dan source kehidupan. Ia menunjukkan bahwa setiap langkah atau pertumbuhan harus berawal dari pijakan yang kokoh, sehingga mampu menopang cabang dan daun di atasnya. Akar juga melambangkan keterhubungan dengan tanah, tradisi, dan nilai-nilai dasar yang memberi nutrisi bagi perkembangan.
                         </p>
                     </div>
                 </li>

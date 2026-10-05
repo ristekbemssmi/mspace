@@ -1,22 +1,20 @@
-import { Head } from '@inertiajs/react';
-import React from 'react';
-import AppLayout from '@/Layouts/AppLayout';
-import BeasiswaTentang from './BeasiswaTentang';
-import BeasiswaCard from './BeasiswaCard';
+import InformationCategoryPage, { informationCategoryLayout, type CategoryItem } from '@/Components/InformationCategoryPage';
 
-export default function InformasiBeasiswa({ beasiswaData = [] }: { beasiswaData?: any[] }) {
+export default function InformasiBeasiswa({ items = [] }: { items?: CategoryItem[] }) {
     return (
-        <>
-            <Head title="Informasi Beasiswa" />
-            <main className="page">
-                {/* Header Section */}
-                <BeasiswaTentang />
-
-                {/* Cards Section */}
-                <BeasiswaCard beasiswaData={beasiswaData} />
-            </main>
-        </>
+        <InformationCategoryPage
+            title="Informasi Beasiswa"
+            introduction="Temukan kesempatan beasiswa terbaru untuk mahasiswa SSMI. Pilih beasiswa untuk melihat persyaratan, manfaat, dan cara pendaftarannya."
+            searchLabel="Cari beasiswa..."
+            items={items}
+            fields={[
+                { key: 'organizer', label: 'Penyelenggara' },
+                { key: 'opensOn', label: 'Pendaftaran dibuka', format: 'date' },
+                { key: 'closesOn', label: 'Pendaftaran ditutup', format: 'date' },
+            ]}
+            headerLink={{ href: 'https://studentportal.ipb.ac.id', label: 'Menuju Student Portal' }}
+        />
     );
 }
 
-InformasiBeasiswa.layout = (page: React.ReactNode) => <AppLayout children={page} />;
+InformasiBeasiswa.layout = informationCategoryLayout;

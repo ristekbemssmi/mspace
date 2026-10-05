@@ -18,7 +18,7 @@ export default function FaqSearch({
                 </button>
                 <input
                     type="text"
-                    placeholder="Cari pertanyaan..."
+                    placeholder="Cari question..."
                     value={searchQuery || ''}
                     onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
                     className="w-full h-full border-none focus:outline-none text-lg md:text-2xl bg-transparent"

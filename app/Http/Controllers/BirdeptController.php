@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Birdept;
+use App\Models\Informasi;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,10 +14,10 @@ class BirdeptController extends Controller
      */
     public function index(): Response
     {
-        $birdepts = Birdept::all();
+        $units = Birdept::query()->orderBy('unitId')->get(['unitId', 'name', 'abbreviation', 'type', 'description', 'instagram']);
 
         return Inertia::render('Birdept/Index', [
-            'birdepts' => $birdepts
+            'units' => $units,
         ]);
     }
 
@@ -26,10 +26,10 @@ class BirdeptController extends Controller
      */
     public function bemssmi(): Response
     {
-        $birdepts = Birdept::all();
+        $units = Birdept::query()->orderBy('unitId')->get(['unitId', 'name', 'abbreviation', 'type', 'description', 'instagram']);
 
         return Inertia::render('Bemssmi/Index', [
-            'birdepts' => $birdepts
+            'units' => $units,
         ]);
     }
 
@@ -38,16 +38,22 @@ class BirdeptController extends Controller
      */
     public function show($slug): Response
     {
-        $birdept = Birdept::with([
-            'informasi' => function ($query) {
-                $query->where('jenis_informasi', 'proker')
-                      ->where('status', 'published')
-                      ->orderBy('created_at', 'desc');
-            }
-        ])->where('nama_panggilan', $slug)->firstOrFail();
+        $birdept = Birdept::where('abbreviation', $slug)->firstOrFail(['unitId', 'name', 'abbreviation', 'type', 'description', 'instagram']);
+        $birdept->setRelation('informasi', Informasi::query()
+            ->select(Informasi::PUBLIC_COLUMNS)
+            ->where('category', 'proker')
+            ->published()
+            ->active()
+            ->where(fn ($query) => $query->where('unitId', $birdept->unitId)
+                ->orWhereHas('units', fn ($members) => $members->whereKey($birdept->unitId)))
+            ->with('proker:id,priority')
+            ->orderByDesc('createdAt')
+            ->get()
+            ->sortBy(fn ($item) => $item->proker?->priority ?? PHP_INT_MAX)
+            ->values());
 
         return Inertia::render('Birdept/Show', [
-            'birdept' => $birdept
+            'birdept' => $birdept,
         ]);
     }
 }

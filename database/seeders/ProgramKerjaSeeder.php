@@ -19,50 +19,51 @@ class ProgramKerjaSeeder extends Seeder
         $user = \App\Models\User::first();
 
         if (!$birdept || !$user) {
-            throw new \Exception('Seeding failed: Please ensure birdepts and users tables have at least one record.');
+            throw new \Exception('Seeding failed: Please ensure units and users tables have at least one record.');
         }
 
         // Clear existing data
         \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \App\Models\InformasiProker::truncate();
-        \DB::table('panitia_proker')->truncate();
-        \App\Models\Informasi::where('jenis_informasi', 'proker')->delete();
+        \DB::table('workProgramCommittees')->truncate();
+        \App\Models\Informasi::where('category', 'proker')->delete();
         \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $prokers = [
-            ['nama' => 'M Care', 'desc' => 'Program kerja yang berfokus pada kesejahteraan dan kepedulian antar sesama mahasiswa SSMI.'],
-            ['nama' => 'MISSION 2.0', 'desc' => 'Inisiatif strategis untuk meningkatkan kapasitas intelektual dan profesionalisme mahasiswa.'],
-            ['nama' => 'Mignight', 'desc' => 'Malam apresiasi dan keakraban bagi seluruh civitas akademika SSMI.'],
-            ['nama' => 'SPECTRA', 'desc' => 'Ajang unjuk bakat dan kreativitas dalam berbagai bidang minat mahasiswa.'],
-            ['nama' => 'Pojok Seni', 'desc' => 'Wadah bagi mahasiswa untuk mengekspresikan karya seni dan kreativitas visual.'],
-            ['nama' => 'Tekno Karsa 2.0', 'desc' => 'Pengembangan inovasi teknologi tepat guna untuk menjawab tantangan masyarakat.'],
+            ['name' => 'M Care', 'desc' => 'Program kerja yang berfokus pada kesejahteraan dan kepedulian antar sesama mahasiswa SSMI.'],
+            ['name' => 'MISSION 2.0', 'desc' => 'Inisiatif strategis untuk meningkatkan kapasitas intelektual dan profesionalisme mahasiswa.'],
+            ['name' => 'Mignight', 'desc' => 'Malam apresiasi dan keakraban bagi seluruh civitas akademika SSMI.'],
+            ['name' => 'SPECTRA', 'desc' => 'Ajang unjuk bakat dan kreativitas dalam berbagai bidang minat mahasiswa.'],
+            ['name' => 'Pojok Seni', 'desc' => 'Wadah bagi mahasiswa untuk mengekspresikan karya seni dan kreativitas visual.'],
+            ['name' => 'Tekno Karsa 2.0', 'desc' => 'Pengembangan inovasi teknologi tepat guna untuk menjawab tantangan masyarakat.'],
         ];
 
-        foreach ($prokers as $p) {
-            $informasi = \App\Models\Informasi::create([
-                'idbirdept' => $birdept->idbirdept,
-                'iduser' => $user->id,
-                'judul' => $p['nama'],
-                'deskripsi' => $p['desc'],
+        foreach ($prokers as $index => $p) {
+            $information = \App\Models\Informasi::create([
+                'unitId' => $birdept->unitId,
+                'userId' => $user->id,
+                'title' => $p['name'],
+                'description' => $p['desc'],
                 'status' => 'published',
-                'jenis_informasi' => 'proker',
-                'waktu_publikasi' => now(),
+                'category' => 'proker',
+                'publishedAt' => now(),
             ]);
 
             \App\Models\InformasiProker::create([
-                'id' => $informasi->id,
-                'tujuan' => 'Meningkatkan solidaritas mahasiswa',
-                'sasaran' => 'Seluruh Mahasiswa SSMI',
-                'waktu_mulai' => now(),
-                'waktu_selesai' => now()->addDays(7),
+                'id' => $information->id,
+                'purpose' => 'Meningkatkan solidaritas mahasiswa',
+                'audience' => 'Seluruh Mahasiswa SSMI',
+                'startsOn' => now(),
+                'endsOn' => now()->addDays(7),
+                'priority' => $index + 1,
             ]);
 
             // Add sample committee
-            \DB::table('panitia_proker')->insert([
-                'id_proker' => $informasi->id,
-                'user_id' => $user->id,
-                'jabatan' => 'Penanggung Jawab',
-                'divisi' => null,
+            \DB::table('workProgramCommittees')->insert([
+                'workProgramId' => $information->id,
+                'userId' => $user->id,
+                'position' => 'Penanggung Jawab',
+                'division' => null,
             ]);
         }
     }
